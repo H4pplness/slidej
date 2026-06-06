@@ -1,0 +1,287 @@
+{
+  "name": "candy-pop",
+  "description": "Bold pop-art style on white backgrounds. Use for energetic, fun presentations — events, product launches, educational content, social campaigns. High contrast, playful geometry. Tone: joyful, bold, youthful.",
+  "tags": ["pop", "bright", "playful", "bold", "white-bg"],
+  "guide": {
+    "palette": "White backgrounds, dark text (#1A1A2E). Five candy accent colors: hot pink #FF2D87, electric blue #00C9FF, lime #7CFF6B, sunny yellow #FFD93D, violet #A855F7. Use them in rotation for visual variety.",
+    "layout": "Hero: centered large title with decorative ellipses bleeding off all 4 corners. Content: centered title + 3-column solid-color cards. Process: numbered circles (ellipse) connected by arrow shapes. Closing: dark bg with gradient blobs.",
+    "components": ["Large decorative ellipses (solid candy colors, partially off-screen) as corner accents", "Solid-color roundRect cards with matching color-tinted shadows", "Numbered ellipse circles for process/step flows", "Arrow shapes (rightArrow) as step connectors", "Rainbow gradient bars (5-stop rect) as top/bottom borders", "Gradient CTA buttons (multi-stop candy rainbow)"],
+    "animations": "zoomIn and bounceIn for emphasis. flyIn from bottom for cards (staggered). fadeIn for connectors. Keep durations snappy (500–600ms) to match the energetic vibe.",
+    "customization": "Use any number of the 5 accent colors. Add more process steps by repeating circle + arrow pairs. The corner-ellipse pattern works on any slide for instant visual energy. For darker slides, flip to dark bg with gradient ellipses."
+  },
+  "width": 13.333,
+  "height": 7.5,
+  "meta": { "title": "Candy Pop", "author": "Author" },
+  "theme": {
+    "colors": { "accent1": "FF2D87", "accent2": "00C9FF", "dk1": "1A1A2E", "lt1": "FFFFFF" },
+    "majorFont": "Calibri Light",
+    "minorFont": "Calibri"
+  },
+  "slides": [
+    {
+      "background": "FFFFFF",
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": -1.5, "y": -1.5, "w": 5, "h": 5 },
+          "fill": "FF2D87"
+        },
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": 10, "y": 4.5, "w": 5, "h": 5 },
+          "fill": "00C9FF"
+        },
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": 9, "y": -2, "w": 3.5, "h": 3.5 },
+          "fill": "7CFF6B"
+        },
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": 0, "y": 5.5, "w": 3, "h": 3 },
+          "fill": "FFD93D"
+        },
+        {
+          "type": "text",
+          "text": "Big Bold Idea",
+          "position": { "x": 1.5, "y": 1.5, "w": 10, "h": 2 },
+          "fontSize": 64,
+          "bold": true,
+          "color": "1A1A2E",
+          "align": "center",
+          "animations": [{ "type": "zoomIn", "duration": 600, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "text",
+          "text": "Make it colorful. Make it yours.",
+          "position": { "x": 2, "y": 3.8, "w": 9, "h": 0.8 },
+          "fontSize": 24,
+          "color": "666666",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious", "delay": 300 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 4.5, "y": 5.2, "w": 4.3, "h": 0.9 },
+          "fill": "FF2D87",
+          "text": "Let's Go!",
+          "fontSize": 20,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 8, "distance": 4, "angle": 45, "color": "FF2D87", "opacity": 40 },
+          "animations": [{ "type": "bounceIn", "duration": 600, "trigger": "afterPrevious", "delay": 200 }]
+        }
+      ]
+    },
+    {
+      "background": "FFFFFF",
+      "transition": { "type": "push", "speed": "med" },
+      "elements": [
+        {
+          "type": "shape",
+          "shapeType": "rect",
+          "position": { "x": 0, "y": 0, "w": 13.333, "h": 0.15 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "FF2D87" }, { "position": 25, "color": "FFD93D" }, { "position": 50, "color": "7CFF6B" }, { "position": 75, "color": "00C9FF" }, { "position": 100, "color": "A855F7" }], "angle": 90 }
+        },
+        {
+          "type": "text",
+          "text": "What Makes Us Special",
+          "position": { "x": 0.5, "y": 0.5, "w": 12.3, "h": 1.2 },
+          "fontSize": 40,
+          "bold": true,
+          "color": "1A1A2E",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 0.5, "y": 2, "w": 3.8, "h": 3.5 },
+          "fill": "FF2D87",
+          "text": [
+            { "text": "Creative", "fontSize": 24, "bold": true, "color": "FFFFFF" },
+            { "text": "We turn ordinary ideas into extraordinary experiences", "fontSize": 14, "color": "FFD4E8" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 12, "distance": 6, "angle": 45, "color": "FF2D87", "opacity": 35 },
+          "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 4.7, "y": 2, "w": 3.8, "h": 3.5 },
+          "fill": "00C9FF",
+          "text": [
+            { "text": "Dynamic", "fontSize": 24, "bold": true, "color": "FFFFFF" },
+            { "text": "Energy and movement in everything we create", "fontSize": 14, "color": "C8F0FF" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 12, "distance": 6, "angle": 45, "color": "00C9FF", "opacity": 35 },
+          "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 8.9, "y": 2, "w": 3.8, "h": 3.5 },
+          "fill": "A855F7",
+          "text": [
+            { "text": "Unique", "fontSize": 24, "bold": true, "color": "FFFFFF" },
+            { "text": "Standing out from the crowd is what we do best", "fontSize": 14, "color": "E0C8FF" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 12, "distance": 6, "angle": 45, "color": "A855F7", "opacity": 35 },
+          "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "rect",
+          "position": { "x": 0, "y": 7.35, "w": 13.333, "h": 0.15 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "FF2D87" }, { "position": 25, "color": "FFD93D" }, { "position": 50, "color": "7CFF6B" }, { "position": 75, "color": "00C9FF" }, { "position": 100, "color": "A855F7" }], "angle": 90 }
+        }
+      ]
+    },
+    {
+      "background": "FFFFFF",
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "text",
+          "text": "The Process",
+          "position": { "x": 0.5, "y": 0.4, "w": 12.3, "h": 1 },
+          "fontSize": 36,
+          "bold": true,
+          "color": "1A1A2E",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": 0.8, "y": 2.2, "w": 2.5, "h": 2.5 },
+          "fill": "FF2D87",
+          "text": [
+            { "text": "01", "fontSize": 32, "bold": true, "color": "FFFFFF" },
+            { "text": "Dream", "fontSize": 14, "bold": true, "color": "FFD4E8" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 10, "distance": 4, "angle": 45, "color": "FF2D87", "opacity": 30 },
+          "animations": [{ "type": "zoomIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "rightArrow",
+          "position": { "x": 3.5, "y": 3, "w": 1, "h": 0.8 },
+          "fill": "FFD93D",
+          "animations": [{ "type": "fadeIn", "duration": 300, "trigger": "afterPrevious", "delay": 100 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": 4.7, "y": 2.2, "w": 2.5, "h": 2.5 },
+          "fill": "FFD93D",
+          "text": [
+            { "text": "02", "fontSize": 32, "bold": true, "color": "1A1A2E" },
+            { "text": "Design", "fontSize": 14, "bold": true, "color": "665500" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 10, "distance": 4, "angle": 45, "color": "FFD93D", "opacity": 30 },
+          "animations": [{ "type": "zoomIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "rightArrow",
+          "position": { "x": 7.4, "y": 3, "w": 1, "h": 0.8 },
+          "fill": "7CFF6B",
+          "animations": [{ "type": "fadeIn", "duration": 300, "trigger": "afterPrevious", "delay": 100 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": 8.6, "y": 2.2, "w": 2.5, "h": 2.5 },
+          "fill": "00C9FF",
+          "text": [
+            { "text": "03", "fontSize": 32, "bold": true, "color": "FFFFFF" },
+            { "text": "Deliver", "fontSize": 14, "bold": true, "color": "C8F0FF" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 10, "distance": 4, "angle": 45, "color": "00C9FF", "opacity": 30 },
+          "animations": [{ "type": "zoomIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "text",
+          "text": "Simple, colorful, effective.",
+          "position": { "x": 1, "y": 5.5, "w": 11, "h": 0.8 },
+          "fontSize": 20,
+          "italic": true,
+          "color": "999999",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious", "delay": 300 }]
+        }
+      ]
+    },
+    {
+      "background": "1A1A2E",
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": -2, "y": -2, "w": 6, "h": 6 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "FF2D87" }, { "position": 100, "color": "A855F7" }], "angle": 135 }
+        },
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": 10, "y": 4, "w": 5, "h": 5 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "00C9FF" }, { "position": 100, "color": "7CFF6B" }], "angle": 45 }
+        },
+        {
+          "type": "text",
+          "text": "Ready to Pop?",
+          "position": { "x": 1.5, "y": 2, "w": 10.3, "h": 1.5 },
+          "fontSize": 52,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "center",
+          "animations": [{ "type": "zoomIn", "duration": 700, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "text",
+          "text": "hello@brand.com  •  @brand",
+          "position": { "x": 2, "y": 3.8, "w": 9.3, "h": 0.7 },
+          "fontSize": 20,
+          "color": "FF2D87",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious", "delay": 300 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 4.2, "y": 5, "w": 4.9, "h": 0.9 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "FF2D87" }, { "position": 50, "color": "FFD93D" }, { "position": 100, "color": "00C9FF" }], "angle": 90 },
+          "text": "Contact Us",
+          "fontSize": 20,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [{ "type": "bounceIn", "duration": 600, "trigger": "afterPrevious", "delay": 200 }]
+        }
+      ]
+    }
+  ]
+}

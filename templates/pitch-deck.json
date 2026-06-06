@@ -1,7 +1,14 @@
 {
   "name": "pitch-deck",
-  "description": "A 5-slide startup pitch deck: title, problem, solution, traction/metrics, and CTA. Professional dark-to-light theme with staggered animations.",
-  "tags": ["pitch", "startup", "business", "multi-slide"],
+  "description": "Professional dark-to-light style. Use for persuasive storytelling — pitches, proposals, product launches. Follows a narrative arc: hook → problem → solution → proof → CTA. Tone: confident, data-driven.",
+  "tags": ["business", "pitch", "storytelling", "professional"],
+  "guide": {
+    "palette": "Dark hero slides (#0B1D3A), white content slides, accent gradients (purple #6C5CE7, green #00B894, blue #0984E3). Cards use gradient fills with matching shadows.",
+    "layout": "Hero slides: centered text stack. Content slides: section title at top + 2-column or 3-column card grid below. Metric slides: equal-width roundRect cards with large numbers.",
+    "components": ["Centered hero heading (48–56pt)", "Section title (36pt bold, top-aligned)", "roundRect cards with gradient fill (icon-title-description pattern)", "Metric cards: big number + label", "Italic summary text below content"],
+    "animations": "fadeIn for titles, flyIn (left/right/bottom) for cards with staggered delays (200ms). zoomIn for metric numbers. afterPrevious trigger throughout.",
+    "customization": "Add or remove slides freely. Insert table slides for comparisons, image slides for product shots, or extra card rows. Adjust the narrative arc to fit your story — the pattern (hook → evidence → ask) works at any length."
+  },
   "width": 13.333,
   "height": 7.5,
   "meta": { "title": "Pitch Deck", "author": "Startup Name" },

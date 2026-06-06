@@ -1,0 +1,276 @@
+{
+  "name": "neon-garden",
+  "description": "High-contrast neon-on-black style. Use for maximum visual impact — creative agencies, art portfolios, event decks, music/entertainment. Each element glows against the dark canvas. Tone: electric, rebellious, artistic.",
+  "tags": ["neon", "high-contrast", "electric", "dark", "bold"],
+  "guide": {
+    "palette": "Pure black background (#0A0A0A), dark card fills (#141414). Four neon accents: lime #39FF14, hot pink #FF6EC7, tangerine #FF5F1F, violet #BF40BF. Each color has a matching glow shadow (same color, opacity 20–50%, blur 15–25).",
+    "layout": "Hero: left-aligned title with massive gradient ellipses bleeding off edges. Content: centered title + 4-column narrow cards with neon borders (one color per card). Metrics: large gradient ellipses with centered numbers. Closing: full-bleed gradient ellipse with dark text.",
+    "components": ["Gradient ellipses (multi-stop neon colors) as hero decorations", "Narrow tall cards with neon borders and matching glow shadows", "Large ellipses with gradient fill for metric/stat displays", "Rainbow gradient bars (4-stop neon) as top/bottom accents", "Dark CTA buttons with neon text color", "Each component uses one neon color — rotate through the 4 for variety"],
+    "animations": "flyIn from bottom for cards (staggered 150ms). zoomIn for metric circles. bounceIn for CTA. fadeIn for connectors. Keep it punchy (500ms).",
+    "customization": "The glow shadow technique (blur: 15-25, distance: 0, color: same as border) works on any shape. Add more card columns or switch to 2-column wide cards. For text-heavy slides, use neon headings with gray (#888) body text. The 4-color rotation creates natural visual rhythm at any scale."
+  },
+  "width": 13.333,
+  "height": 7.5,
+  "meta": { "title": "Neon Garden", "author": "Author" },
+  "theme": {
+    "colors": { "accent1": "39FF14", "accent2": "FF6EC7", "dk1": "0A0A0A", "lt1": "FFFFFF" },
+    "majorFont": "Calibri Light",
+    "minorFont": "Calibri"
+  },
+  "slides": [
+    {
+      "background": "0A0A0A",
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": 7, "y": 0, "w": 9, "h": 9 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "39FF14" }, { "position": 50, "color": "FF6EC7" }, { "position": 100, "color": "FF5F1F" }], "angle": 160 },
+          "rotation": 0
+        },
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": -3, "y": 3, "w": 6, "h": 6 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "BF40BF" }, { "position": 100, "color": "39FF14" }], "angle": 90 },
+          "rotation": 0
+        },
+        {
+          "type": "text",
+          "text": "Glow Different",
+          "position": { "x": 0.8, "y": 1.8, "w": 7, "h": 2 },
+          "fontSize": 60,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "left",
+          "animations": [{ "type": "fadeIn", "duration": 800, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "text",
+          "text": "Where bold ideas bloom in neon light",
+          "position": { "x": 0.8, "y": 3.9, "w": 6, "h": 0.8 },
+          "fontSize": 20,
+          "color": "39FF14",
+          "align": "left",
+          "animations": [{ "type": "fadeIn", "duration": 600, "trigger": "afterPrevious", "delay": 300 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 0.8, "y": 5.2, "w": 3.5, "h": 0.8 },
+          "fill": "39FF14",
+          "text": "Enter",
+          "fontSize": 18,
+          "bold": true,
+          "color": "0A0A0A",
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 20, "distance": 0, "angle": 0, "color": "39FF14", "opacity": 50 },
+          "animations": [{ "type": "flyIn", "direction": "left", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        }
+      ]
+    },
+    {
+      "background": "0A0A0A",
+      "transition": { "type": "push", "speed": "med" },
+      "elements": [
+        {
+          "type": "shape",
+          "shapeType": "rect",
+          "position": { "x": 0, "y": 0, "w": 13.333, "h": 0.08 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "39FF14" }, { "position": 33, "color": "FF6EC7" }, { "position": 66, "color": "FF5F1F" }, { "position": 100, "color": "BF40BF" }], "angle": 90 }
+        },
+        {
+          "type": "text",
+          "text": "The Garden",
+          "position": { "x": 0.5, "y": 0.4, "w": 12.3, "h": 1.2 },
+          "fontSize": 42,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 0.5, "y": 2, "w": 2.8, "h": 4.5 },
+          "fill": "141414",
+          "line": { "color": "39FF14", "width": 2 },
+          "text": [
+            { "text": "Bloom", "fontSize": 22, "bold": true, "color": "39FF14" },
+            { "text": "Ideas that grow from seed to full spectacle", "fontSize": 13, "color": "88AA88" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 15, "distance": 0, "angle": 0, "color": "39FF14", "opacity": 20 },
+          "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 500, "trigger": "afterPrevious", "delay": 150 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 3.7, "y": 2, "w": 2.8, "h": 4.5 },
+          "fill": "141414",
+          "line": { "color": "FF6EC7", "width": 2 },
+          "text": [
+            { "text": "Petal", "fontSize": 22, "bold": true, "color": "FF6EC7" },
+            { "text": "Every detail crafted with artistic precision", "fontSize": 13, "color": "AA7799" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 15, "distance": 0, "angle": 0, "color": "FF6EC7", "opacity": 20 },
+          "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 500, "trigger": "afterPrevious", "delay": 150 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 6.9, "y": 2, "w": 2.8, "h": 4.5 },
+          "fill": "141414",
+          "line": { "color": "FF5F1F", "width": 2 },
+          "text": [
+            { "text": "Flame", "fontSize": 22, "bold": true, "color": "FF5F1F" },
+            { "text": "Energy that burns bright and captivates", "fontSize": 13, "color": "AA7755" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 15, "distance": 0, "angle": 0, "color": "FF5F1F", "opacity": 20 },
+          "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 500, "trigger": "afterPrevious", "delay": 150 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 10.1, "y": 2, "w": 2.8, "h": 4.5 },
+          "fill": "141414",
+          "line": { "color": "BF40BF", "width": 2 },
+          "text": [
+            { "text": "Crown", "fontSize": 22, "bold": true, "color": "BF40BF" },
+            { "text": "The final flourish that ties it all together", "fontSize": 13, "color": "9966AA" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 15, "distance": 0, "angle": 0, "color": "BF40BF", "opacity": 20 },
+          "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 500, "trigger": "afterPrevious", "delay": 150 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "rect",
+          "position": { "x": 0, "y": 7.42, "w": 13.333, "h": 0.08 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "39FF14" }, { "position": 33, "color": "FF6EC7" }, { "position": 66, "color": "FF5F1F" }, { "position": 100, "color": "BF40BF" }], "angle": 90 }
+        }
+      ]
+    },
+    {
+      "background": "0A0A0A",
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "text",
+          "text": "By the Numbers",
+          "position": { "x": 0.5, "y": 0.3, "w": 12.3, "h": 1.1 },
+          "fontSize": 38,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": 1, "y": 2, "w": 3, "h": 3 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "39FF14" }, { "position": 100, "color": "00AA00" }], "angle": 135 },
+          "text": [
+            { "text": "500+", "fontSize": 28, "bold": true, "color": "0A0A0A" },
+            { "text": "Projects", "fontSize": 12, "color": "003300" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 25, "distance": 0, "angle": 0, "color": "39FF14", "opacity": 40 },
+          "animations": [{ "type": "zoomIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": 5, "y": 1.8, "w": 3.3, "h": 3.3 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "FF6EC7" }, { "position": 100, "color": "CC2288" }], "angle": 135 },
+          "text": [
+            { "text": "98%", "fontSize": 32, "bold": true, "color": "FFFFFF" },
+            { "text": "Happy", "fontSize": 12, "color": "FFD0E8" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 25, "distance": 0, "angle": 0, "color": "FF6EC7", "opacity": 40 },
+          "animations": [{ "type": "zoomIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": 9.3, "y": 2, "w": 3, "h": 3 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "FF5F1F" }, { "position": 100, "color": "CC3300" }], "angle": 135 },
+          "text": [
+            { "text": "24/7", "fontSize": 28, "bold": true, "color": "FFFFFF" },
+            { "text": "Always On", "fontSize": 12, "color": "FFD0B0" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 25, "distance": 0, "angle": 0, "color": "FF5F1F", "opacity": 40 },
+          "animations": [{ "type": "zoomIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "text",
+          "text": "Numbers that glow as bright as our work.",
+          "position": { "x": 1, "y": 5.8, "w": 11, "h": 0.8 },
+          "fontSize": 18,
+          "italic": true,
+          "color": "666666",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious", "delay": 300 }]
+        }
+      ]
+    },
+    {
+      "background": "0A0A0A",
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": 2, "y": -1, "w": 9, "h": 9 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "39FF14" }, { "position": 25, "color": "FF6EC7" }, { "position": 50, "color": "FF5F1F" }, { "position": 100, "color": "BF40BF" }], "angle": 135 },
+          "rotation": 0
+        },
+        {
+          "type": "text",
+          "text": "Let's Grow",
+          "position": { "x": 1, "y": 1.8, "w": 11, "h": 1.8 },
+          "fontSize": 56,
+          "bold": true,
+          "color": "0A0A0A",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 800, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "text",
+          "text": "Something beautiful, together.",
+          "position": { "x": 2, "y": 3.5, "w": 9, "h": 0.8 },
+          "fontSize": 22,
+          "color": "0A0A0A",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 600, "trigger": "afterPrevious", "delay": 300 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 4.4, "y": 5, "w": 4.5, "h": 0.8 },
+          "fill": "0A0A0A",
+          "text": "hello@garden.studio",
+          "fontSize": 18,
+          "bold": true,
+          "color": "39FF14",
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [{ "type": "bounceIn", "duration": 600, "trigger": "afterPrevious", "delay": 200 }]
+        }
+      ]
+    }
+  ]
+}

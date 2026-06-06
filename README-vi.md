@@ -80,17 +80,23 @@ slidej example -o starter.json
 
 ## Template
 
-SlideJ có sẵn các template làm điểm khởi đầu. Luồng làm việc: chọn template, xuất ra JSON, tùy chỉnh nội dung, rồi tạo PPTX cuối cùng.
+SlideJ có sẵn các template dưới dạng **hướng dẫn phong cách** — mỗi template định nghĩa một ngôn ngữ thiết kế (bảng màu, bố cục, component, animation) kèm các slide tham khảo. Dùng chúng làm điểm khởi đầu, rồi tự do thêm, bớt, sắp xếp lại slide tùy theo nội dung.
 
 ### Template có sẵn
 
-| Template | Số slide | Mô tả |
-|----------|----------|-------|
-| `title-slide` | 1 | Slide tiêu đề hero với phụ đề và nút CTA |
-| `pitch-deck` | 5 | Pitch startup: tiêu đề, vấn đề, giải pháp, số liệu, CTA |
-| `report` | 4 | Báo cáo kinh doanh: bìa, phát hiện chính, phân tích, tóm tắt |
-| `minimal` | 3 | Giao diện trắng sạch, tối giản |
-| `dark-modern` | 3 | Giao diện tối với gradient neon |
+| Template | Phong cách | Tone |
+|----------|-----------|------|
+| `title-slide` | Hero tối, trọng tâm giữa slide | Mạnh mẽ, tự tin |
+| `pitch-deck` | Chuyên nghiệp tối-sang, mạch tường thuật | Thuyết phục, dữ liệu |
+| `report` | Corporate sạch, bảng biểu và KPI | Uy tín, rõ ràng |
+| `minimal` | Khoảng trắng tối giản, chỉ typography | Bình tĩnh, tập trung |
+| `dark-modern` | UI tối, gradient accent | Sắc nét, tương lai |
+| `sunset-wave` | Gradient ấm, hình dạng organic | Mơ màng, biểu cảm |
+| `candy-pop` | Pop-art, hình học sáng trên nền trắng | Vui nhộn, trẻ trung |
+| `ocean-aurora` | Tông lạnh sâu, hiệu ứng glow | Chìm đắm, sang trọng |
+| `neon-garden` | Neon trên nền đen, tương phản cao | Mạnh mẽ, nghệ thuật |
+
+Mỗi template có trường `guide` chứa hướng dẫn chi tiết về bảng màu, bố cục, component tái sử dụng, phong cách animation và gợi ý tùy chỉnh. Chạy `slidej template info <name>` để xem đầy đủ.
 
 ### Luồng làm việc với template
 

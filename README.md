@@ -80,17 +80,23 @@ slidej example -o starter.json
 
 ## Templates
 
-SlideJ includes built-in templates that serve as starting points. The workflow: pick a template, export it to JSON, customize, then generate the final PPTX.
+SlideJ includes built-in templates as **style guides** — each template defines a visual language (palette, layout patterns, component styles, animation approach) along with example slides. Use them as a starting point, then freely add, remove, or rearrange slides to fit your content.
 
 ### Built-in templates
 
-| Template | Slides | Description |
-|----------|--------|-------------|
-| `title-slide` | 1 | Hero title with subtitle and CTA button |
-| `pitch-deck` | 5 | Startup pitch: title, problem, solution, traction, CTA |
-| `report` | 4 | Business report: cover, key findings, breakdown, summary |
-| `minimal` | 3 | Clean white theme with minimal styling |
-| `dark-modern` | 3 | Dark theme with neon gradient accents |
+| Template | Style | Tone |
+|----------|-------|------|
+| `title-slide` | Dark hero, centered focal point | Dramatic, confident |
+| `pitch-deck` | Professional dark-to-light, narrative arc | Confident, data-driven |
+| `report` | Clean corporate, tables and KPI cards | Authoritative, clear |
+| `minimal` | Ultra-clean whitespace, typography only | Calm, focused |
+| `dark-modern` | Sleek dark UI, gradient accents | Sharp, futuristic |
+| `sunset-wave` | Warm gradients, organic shapes | Dreamy, expressive |
+| `candy-pop` | Bold pop-art, bright geometry on white | Joyful, youthful |
+| `ocean-aurora` | Deep cool-tone, ethereal glow | Immersive, elegant |
+| `neon-garden` | Neon-on-black, high contrast | Electric, rebellious |
+
+Each template includes a `guide` object with detailed instructions on palette, layout patterns, reusable components, animation style, and customization tips. Run `slidej template info <name>` to view the full style guide.
 
 ### Template workflow
 

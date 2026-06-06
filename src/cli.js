@@ -139,9 +139,8 @@ templateCmd
     console.log(chalk.bold.blue('\n═══ Available Templates ═══\n'));
     for (const tpl of templates) {
       const tags = tpl.tags ? chalk.gray(` [${tpl.tags.join(', ')}]`) : '';
-      const slides = tpl.slides ? chalk.white(` (${tpl.slides.length} slides)`) : '';
       const src = tpl._source === 'builtin' ? chalk.cyan(' built-in') : chalk.green(' custom');
-      console.log(`  ${chalk.bold.white(tpl.name)}${slides}${src}${tags}`);
+      console.log(`  ${chalk.bold.white(tpl.name)}${src}${tags}`);
       if (tpl.description) {
         console.log(`    ${chalk.gray(tpl.description)}`);
       }
@@ -269,42 +268,28 @@ templateCmd
     }
 
     console.log(chalk.bold.blue(`\n═══ Template: ${tpl.name} ═══\n`));
-    if (tpl.description) console.log(chalk.white(`  Description: ${tpl.description}`));
+    if (tpl.description) console.log(chalk.white(`  ${tpl.description}`));
+    console.log();
     if (tpl.tags) console.log(chalk.white(`  Tags: ${tpl.tags.join(', ')}`));
     console.log(chalk.white(`  Source: ${tpl._source === 'builtin' ? 'Built-in' : 'Custom'}`));
     console.log(chalk.white(`  Dimensions: ${tpl.width || 13.333}" × ${tpl.height || 7.5}"`));
+    if (tpl.slides) console.log(chalk.white(`  Example slides: ${tpl.slides.length} (reference only — add/remove freely)`));
 
-    if (tpl.slides) {
-      console.log(chalk.white(`  Slides: ${tpl.slides.length}`));
-      console.log();
-      for (let i = 0; i < tpl.slides.length; i++) {
-        const slide = tpl.slides[i];
-        const elCount = slide.elements ? slide.elements.length : 0;
-        const bg = slide.background || 'default';
-        const bgStr = typeof bg === 'string' ? bg : 'gradient';
-        const tr = slide.transition
-          ? (typeof slide.transition === 'string' ? slide.transition : slide.transition.type || 'none')
-          : 'none';
-        console.log(chalk.gray(`    Slide ${i + 1}: ${elCount} elements | bg: ${bgStr} | transition: ${tr}`));
-
-        if (slide.elements) {
-          for (const el of slide.elements) {
-            const animCount = el.animations ? el.animations.length : 0;
-            const animStr = animCount > 0 ? chalk.cyan(` [${animCount} animation(s)]`) : '';
-            const preview = el.type === 'text'
-              ? (typeof el.text === 'string' ? el.text.substring(0, 40) : '(rich text)')
-              : el.type === 'table'
-              ? `${el.rows ? el.rows.length : 0} rows`
-              : el.type === 'shape'
-              ? (el.shapeType || 'rect')
-              : el.type === 'image'
-              ? (el.src ? path.basename(el.src) : 'image')
-              : '';
-            console.log(chalk.gray(`      - ${el.type}: ${preview}${animStr}`));
-          }
+    // Show style guide if available
+    if (tpl.guide) {
+      console.log(chalk.bold.blue('\n  ── Style Guide ──\n'));
+      if (tpl.guide.palette) console.log(chalk.white(`  Palette: ${tpl.guide.palette}`));
+      if (tpl.guide.layout) console.log(chalk.white(`\n  Layout: ${tpl.guide.layout}`));
+      if (tpl.guide.components) {
+        console.log(chalk.white('\n  Components:'));
+        for (const c of tpl.guide.components) {
+          console.log(chalk.gray(`    • ${c}`));
         }
       }
+      if (tpl.guide.animations) console.log(chalk.white(`\n  Animations: ${tpl.guide.animations}`));
+      if (tpl.guide.customization) console.log(chalk.white(`\n  Customization: ${tpl.guide.customization}`));
     }
+
     console.log();
   });
 

@@ -1,7 +1,14 @@
 {
   "name": "title-slide",
-  "description": "A single hero title slide with centered heading, subtitle, and a CTA button. Dark background with fade-in animations.",
-  "tags": ["title", "hero", "single-slide"],
+  "description": "Dark hero style. Use for any slide that needs a bold, centered focal point — title screens, section dividers, or closing CTAs. Tone: dramatic, confident.",
+  "tags": ["hero", "dark", "centered", "dramatic"],
+  "guide": {
+    "palette": "Dark background (#0B1D3A), white heading, muted blue subtitle (#7EB8DA), accent button (#4472C4). Swap these colors freely to match your brand.",
+    "layout": "Vertically centered stack: large heading → subtitle → optional CTA button. All elements centered on the slide.",
+    "components": ["Large bold heading (48–60pt)", "Subtitle or tagline (20–24pt, lighter color)", "Optional CTA roundRect button at bottom"],
+    "animations": "fadeIn for text, flyIn from bottom for CTA. Use afterPrevious with short delays for staggered reveal.",
+    "customization": "Add background gradient, decorative ellipses, or a logo image. Duplicate this slide as a section divider between content sections."
+  },
   "width": 13.333,
   "height": 7.5,
   "meta": { "title": "Presentation Title", "author": "Author" },

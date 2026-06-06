@@ -1,7 +1,14 @@
 {
   "name": "report",
-  "description": "A 4-slide business report template: cover, key findings with table, detailed breakdown, and summary. Clean white theme with subtle animations.",
-  "tags": ["report", "business", "data", "table"],
+  "description": "Clean corporate style. Use for data-heavy content — quarterly reports, reviews, dashboards, research summaries. Emphasizes readability, tables, and structured KPI cards. Tone: authoritative, clear.",
+  "tags": ["corporate", "data", "tables", "formal"],
+  "guide": {
+    "palette": "White content backgrounds, dark header (#2C3E50), blue accent line (#3498DB), light gray card backgrounds (#F8F9FA) with subtle borders (#E0E0E0). KPI numbers use semantic colors (green for positive, blue for neutral, purple for highlights).",
+    "layout": "Cover: split layout (dark left panel + right-aligned title). Content slides: section title + thin accent line + content area. Use 3-column KPI cards above, full-width tables below.",
+    "components": ["Split-panel cover (shape + text)", "Section heading with accent underline (rect 0.05h)", "KPI cards: roundRect with label-number-delta pattern", "Styled tables with headerRow, dark headers, alternating context", "Bullet-point text blocks in 2-column layout for pros/cons or highlights/areas"],
+    "animations": "Subtle fadeIn only (400–500ms). No fly or zoom — keep it professional. Stagger cards with 150ms delays.",
+    "customization": "Add as many data slides as needed. Mix KPI cards with tables. Use 2-column bullet layouts for qualitative analysis. The accent line + heading pattern works for any section title."
+  },
   "width": 13.333,
   "height": 7.5,
   "meta": { "title": "Business Report", "author": "Author" },

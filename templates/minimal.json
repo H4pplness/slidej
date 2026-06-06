@@ -1,7 +1,14 @@
 {
   "name": "minimal",
-  "description": "A clean 3-slide minimal template: title, content with bullets, and closing. White background, minimal styling, no gradients.",
-  "tags": ["minimal", "clean", "simple", "light"],
+  "description": "Ultra-clean whitespace style. Use when content should speak for itself — academic talks, text-heavy presentations, simple briefings. No gradients, no decoration, just typography and space. Tone: calm, focused.",
+  "tags": ["clean", "whitespace", "typography", "simple"],
+  "guide": {
+    "palette": "White background, near-black text (#1A1A1A), gray subtitles (#999999), medium gray body (#444444). Single dark accent line (#333333) as the only decoration.",
+    "layout": "Left-aligned everything. Title slides: heading + thin horizontal rule + subtitle. Content slides: heading + thin rule + bullet list with generous line spacing. Closing: same as title.",
+    "components": ["Left-aligned heading (48pt bold)", "Thin accent line (rect, 3\" wide, 0.06\" tall)", "Subtitle or date text (20pt gray)", "Bullet-point text blocks with 1.6x line spacing", "Simple closing text with contact info"],
+    "animations": "fadeIn only, short durations (400–600ms). Minimal delay. Keep it quiet and understated.",
+    "customization": "Add content slides by repeating the heading + rule + body pattern. For two-column layouts, place two text blocks side by side. Avoid shapes and gradients to maintain the minimal aesthetic — if you need emphasis, use bold or a slightly larger font size."
+  },
   "width": 13.333,
   "height": 7.5,
   "meta": { "title": "Minimal Presentation", "author": "Author" },

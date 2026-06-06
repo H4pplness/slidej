@@ -1,7 +1,14 @@
 {
   "name": "dark-modern",
-  "description": "A 3-slide modern dark template: hero title with gradient accent, feature showcase with icon-like shapes, and closing CTA. Neon accent colors on dark backgrounds.",
-  "tags": ["dark", "modern", "gradient", "neon"],
+  "description": "Sleek dark UI style with gradient accents. Use for tech products, SaaS demos, developer tools, or any topic that benefits from a modern, premium feel. Tone: sharp, futuristic.",
+  "tags": ["dark", "tech", "gradient", "premium", "modern"],
+  "guide": {
+    "palette": "Near-black backgrounds (#0A0A1A, #12122B), white text, gradient accents (purple-to-cyan #7C4DFF→#00D2FF, or green #00B894). Card backgrounds slightly lighter than slide bg (#12122B) with colored borders.",
+    "layout": "Hero: left-aligned title + decorative ellipse overflow on right. Content: centered title + 3-column cards with colored borders. Closing: centered CTA with gradient button.",
+    "components": ["Large left-aligned heading (54pt)", "Decorative gradient ellipse (partially off-screen for visual weight)", "Dark cards with colored borders (line property) and title-description text", "Gradient CTA buttons (roundRect)", "Centered closing heading with contact info"],
+    "animations": "fadeIn for headings, flyIn from bottom for cards (staggered 200ms), zoomIn for CTA buttons. Push transitions between content slides.",
+    "customization": "Add feature slides by repeating the card grid pattern. Use 2-column or 4-column layouts. Add code snippet text blocks with monospace font. The border-color-per-card pattern creates visual hierarchy without heavy fills."
+  },
   "width": 13.333,
   "height": 7.5,
   "meta": { "title": "Dark Modern Deck", "author": "Author" },

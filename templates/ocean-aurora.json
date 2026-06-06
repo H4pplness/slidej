@@ -1,0 +1,259 @@
+{
+  "name": "ocean-aurora",
+  "description": "Deep cool-tone style with ethereal glow accents. Use for tech showcases, scientific presentations, environmental topics, or premium branding. Layered gradients create depth and atmosphere. Tone: immersive, elegant, expansive.",
+  "tags": ["cool", "deep", "glow", "elegant", "immersive"],
+  "guide": {
+    "palette": "Deep navy backgrounds (#001233, #001845, #023E7D). Aurora accent spectrum: teal #00F5D4, cyan #00BBF9, violet #9B5DE5, rose #F15BB5. Cards use very dark fill (#011A3B) with colored borders for glow effect.",
+    "layout": "Hero: centered title with large aurora ellipses (gradient, rotated, bleeding off edges). Content: centered title + accent underline + 2x2 or 3-column grid of dark cards with colored borders. Process: 3-column tall gradient cards.",
+    "components": ["Large rotated gradient ellipses as aurora background effects", "Thin gradient accent lines (multi-stop rect) as section dividers", "Dark metric cards with colored borders and label-bigNumber-subtitle pattern", "Tall gradient cards (teal→cyan→violet→rose progression) for process steps", "Monochrome CTA buttons with gradient fill"],
+    "animations": "fadeIn for most content (500–600ms). wipeIn for accent lines. flyIn from bottom for process cards. Use the glow shadow (blur: 20, distance: 0) on gradient cards for ethereal effect.",
+    "customization": "The aurora ellipses can be layered at different positions and rotations for unique backgrounds. Cycle through the 4 accent colors for card borders to create rainbow progression. Add data tables with dark-themed cell fills. The dark-card-with-glow pattern scales to any grid size."
+  },
+  "width": 13.333,
+  "height": 7.5,
+  "meta": { "title": "Ocean Aurora", "author": "Author" },
+  "theme": {
+    "colors": { "accent1": "00F5D4", "accent2": "00BBF9", "dk1": "001233", "lt1": "FFFFFF" },
+    "majorFont": "Calibri Light",
+    "minorFont": "Calibri"
+  },
+  "slides": [
+    {
+      "background": { "type": "gradient", "stops": [{ "position": 0, "color": "001233" }, { "position": 60, "color": "001845" }, { "position": 100, "color": "023E7D" }], "angle": 170 },
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": 3, "y": -3, "w": 12, "h": 6 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "00F5D4" }, { "position": 50, "color": "00BBF9" }, { "position": 100, "color": "9B5DE5" }], "angle": 120 },
+          "rotation": -10
+        },
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": -4, "y": 5, "w": 10, "h": 5 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "0077B6" }, { "position": 100, "color": "00F5D4" }], "angle": 45 },
+          "rotation": 15
+        },
+        {
+          "type": "text",
+          "text": "Dive Deep",
+          "position": { "x": 1, "y": 2.2, "w": 11, "h": 1.8 },
+          "fontSize": 60,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 1000, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "text",
+          "text": "Into the depths of innovation and discovery",
+          "position": { "x": 2, "y": 4.2, "w": 9, "h": 0.8 },
+          "fontSize": 22,
+          "color": "00F5D4",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 700, "trigger": "afterPrevious", "delay": 400 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "rect",
+          "position": { "x": 5.5, "y": 5.5, "w": 2.3, "h": 0.06 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "00F5D4" }, { "position": 100, "color": "00BBF9" }], "angle": 90 },
+          "animations": [{ "type": "wipeIn", "direction": "left", "duration": 600, "trigger": "afterPrevious", "delay": 200 }]
+        }
+      ]
+    },
+    {
+      "background": { "type": "gradient", "stops": [{ "position": 0, "color": "001233" }, { "position": 100, "color": "001845" }], "angle": 180 },
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "text",
+          "text": "Explore the Depths",
+          "position": { "x": 0.5, "y": 0.3, "w": 12.3, "h": 1.1 },
+          "fontSize": 38,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 600, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "rect",
+          "position": { "x": 5.2, "y": 1.35, "w": 2.9, "h": 0.05 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "00F5D4" }, { "position": 100, "color": "9B5DE5" }], "angle": 90 }
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 0.5, "y": 1.8, "w": 5.9, "h": 2.3 },
+          "fill": "011A3B",
+          "line": { "color": "00F5D4", "width": 2 },
+          "text": [
+            { "text": "Current", "fontSize": 14, "color": "00F5D4" },
+            { "text": "2.4M", "fontSize": 40, "bold": true, "color": "FFFFFF" },
+            { "text": "Active explorers worldwide", "fontSize": 14, "color": "6688AA" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 6.8, "y": 1.8, "w": 5.9, "h": 2.3 },
+          "fill": "011A3B",
+          "line": { "color": "00BBF9", "width": 2 },
+          "text": [
+            { "text": "Wave", "fontSize": 14, "color": "00BBF9" },
+            { "text": "98.7%", "fontSize": 40, "bold": true, "color": "FFFFFF" },
+            { "text": "Satisfaction rating", "fontSize": 14, "color": "6688AA" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 0.5, "y": 4.5, "w": 5.9, "h": 2.3 },
+          "fill": "011A3B",
+          "line": { "color": "9B5DE5", "width": 2 },
+          "text": [
+            { "text": "Depth", "fontSize": 14, "color": "9B5DE5" },
+            { "text": "350+", "fontSize": 40, "bold": true, "color": "FFFFFF" },
+            { "text": "Integration partners", "fontSize": 14, "color": "6688AA" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 6.8, "y": 4.5, "w": 5.9, "h": 2.3 },
+          "fill": "011A3B",
+          "line": { "color": "F15BB5", "width": 2 },
+          "text": [
+            { "text": "Coral", "fontSize": 14, "color": "F15BB5" },
+            { "text": "$12M", "fontSize": 40, "bold": true, "color": "FFFFFF" },
+            { "text": "Annual revenue", "fontSize": 14, "color": "6688AA" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        }
+      ]
+    },
+    {
+      "background": { "type": "gradient", "stops": [{ "position": 0, "color": "001845" }, { "position": 100, "color": "001233" }], "angle": 180 },
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "text",
+          "text": "How It Flows",
+          "position": { "x": 0.5, "y": 0.3, "w": 12.3, "h": 1.1 },
+          "fontSize": 38,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 600, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 0.5, "y": 1.8, "w": 3.8, "h": 4.5 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "00F5D4" }, { "position": 100, "color": "00BBF9" }], "angle": 180 },
+          "text": [
+            { "text": "Discover", "fontSize": 24, "bold": true, "color": "001233" },
+            { "text": "Identify the challenge, understand the landscape, map the territory ahead.", "fontSize": 14, "color": "003355" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 20, "distance": 0, "angle": 0, "color": "00F5D4", "opacity": 25 },
+          "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 600, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 4.7, "y": 1.8, "w": 3.8, "h": 4.5 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "00BBF9" }, { "position": 100, "color": "9B5DE5" }], "angle": 180 },
+          "text": [
+            { "text": "Navigate", "fontSize": 24, "bold": true, "color": "FFFFFF" },
+            { "text": "Chart the course, build the vessel, set sail toward the solution.", "fontSize": 14, "color": "D8D0FF" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 20, "distance": 0, "angle": 0, "color": "9B5DE5", "opacity": 25 },
+          "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 600, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 8.9, "y": 1.8, "w": 3.8, "h": 4.5 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "9B5DE5" }, { "position": 100, "color": "F15BB5" }], "angle": 180 },
+          "text": [
+            { "text": "Surface", "fontSize": 24, "bold": true, "color": "FFFFFF" },
+            { "text": "Emerge with results, share the treasures, celebrate the journey.", "fontSize": 14, "color": "FFD0E8" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 20, "distance": 0, "angle": 0, "color": "F15BB5", "opacity": 25 },
+          "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 600, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "rect",
+          "position": { "x": 0.5, "y": 6.8, "w": 12.3, "h": 0.06 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "00F5D4" }, { "position": 33, "color": "00BBF9" }, { "position": 66, "color": "9B5DE5" }, { "position": 100, "color": "F15BB5" }], "angle": 90 }
+        }
+      ]
+    },
+    {
+      "background": { "type": "gradient", "stops": [{ "position": 0, "color": "023E7D" }, { "position": 50, "color": "001845" }, { "position": 100, "color": "001233" }], "angle": 160 },
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": 3, "y": 3, "w": 12, "h": 8 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "00F5D4" }, { "position": 50, "color": "00BBF9" }, { "position": 100, "color": "9B5DE5" }], "angle": 135 },
+          "rotation": -15
+        },
+        {
+          "type": "text",
+          "text": "Rise to the Surface",
+          "position": { "x": 1, "y": 1.5, "w": 11, "h": 1.5 },
+          "fontSize": 48,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 900, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "text",
+          "text": "contact@ocean.co  •  ocean.co",
+          "position": { "x": 2, "y": 3.2, "w": 9, "h": 0.7 },
+          "fontSize": 20,
+          "color": "00F5D4",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 600, "trigger": "afterPrevious", "delay": 300 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 4.4, "y": 4.5, "w": 4.5, "h": 0.8 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "00F5D4" }, { "position": 100, "color": "00BBF9" }], "angle": 90 },
+          "text": "Start the Journey",
+          "fontSize": 18,
+          "bold": true,
+          "color": "001233",
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [{ "type": "wipeIn", "direction": "left", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        }
+      ]
+    }
+  ]
+}

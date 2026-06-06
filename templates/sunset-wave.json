@@ -1,0 +1,187 @@
+{
+  "name": "sunset-wave",
+  "description": "Warm gradient style with layered organic shapes. Use for creative storytelling, portfolios, brand narratives, or any presentation that needs an emotional, artistic atmosphere. Tone: dreamy, expressive, warm.",
+  "tags": ["warm", "gradient", "artistic", "storytelling", "organic"],
+  "guide": {
+    "palette": "Dark plum backgrounds (#2D1B33, #6B2D5B), warm gradient fills (gold #FFD93D → coral #FF6B6B, magenta #C850C0 → indigo #4158D0, blue #4158D0 → cyan #0ABDE3). Text: white headings, soft warm subtitles (#FFD4C4).",
+    "layout": "Hero: left-aligned title with large decorative ellipses bleeding off edges. Content: centered title + 3-column tall cards with gradient fills, each card a 'chapter' or category. Closing: centered CTA with warm gradient button.",
+    "components": ["Large decorative ellipses (partially off-screen, gradient fill) for visual depth", "Tall gradient cards (roundRect) with chapter-number-title-description pattern", "Rainbow accent line (multi-stop gradient rect) as section divider", "Warm gradient CTA buttons with dark text", "Left-aligned or centered headings (48–56pt)"],
+    "animations": "fadeIn for headings (800–1000ms, slower for dreamy feel), flyIn from sides for cards, zoomIn for CTA. Use longer durations and delays than other templates.",
+    "customization": "Stack more chapter cards or use 2-column layouts. Add image elements for portfolio pieces. The layered ellipses can be repositioned to frame any content. Use the rainbow accent line between any sections."
+  },
+  "width": 13.333,
+  "height": 7.5,
+  "meta": { "title": "Sunset Wave", "author": "Author" },
+  "theme": {
+    "colors": { "accent1": "FF6B6B", "accent2": "FFA07A", "dk1": "2D1B33", "lt1": "FFFFFF" },
+    "majorFont": "Calibri Light",
+    "minorFont": "Calibri"
+  },
+  "slides": [
+    {
+      "background": { "type": "gradient", "stops": [{ "position": 0, "color": "2D1B33" }, { "position": 50, "color": "6B2D5B" }, { "position": 100, "color": "F0756E" }], "angle": 160 },
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": 8.5, "y": -2, "w": 8, "h": 8 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "FFD93D" }, { "position": 100, "color": "FF6B6B" }], "angle": 135 },
+          "rotation": 0
+        },
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": -2, "y": 4, "w": 7, "h": 7 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "C850C0" }, { "position": 100, "color": "4158D0" }], "angle": 45 },
+          "rotation": 0
+        },
+        {
+          "type": "text",
+          "text": "Your Creative Vision",
+          "position": { "x": 0.8, "y": 1.5, "w": 8, "h": 2 },
+          "fontSize": 56,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "left",
+          "fontFamily": "Calibri Light",
+          "animations": [{ "type": "fadeIn", "duration": 1000, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "text",
+          "text": "Where imagination meets inspiration",
+          "position": { "x": 0.8, "y": 3.6, "w": 7, "h": 0.8 },
+          "fontSize": 22,
+          "color": "FFD4C4",
+          "align": "left",
+          "animations": [{ "type": "fadeIn", "duration": 700, "trigger": "afterPrevious", "delay": 300 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 0.8, "y": 5, "w": 3.5, "h": 0.8 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "FFD93D" }, { "position": 100, "color": "FF6B6B" }], "angle": 90 },
+          "text": "Explore",
+          "fontSize": 18,
+          "bold": true,
+          "color": "2D1B33",
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        }
+      ]
+    },
+    {
+      "background": { "type": "gradient", "stops": [{ "position": 0, "color": "2D1B33" }, { "position": 100, "color": "4A2040" }], "angle": 180 },
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "text",
+          "text": "Our Story",
+          "position": { "x": 0.5, "y": 0.4, "w": 12.3, "h": 1.1 },
+          "fontSize": 40,
+          "bold": true,
+          "color": "FFD93D",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 600, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 0.5, "y": 1.8, "w": 3.8, "h": 4 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "FF6B6B" }, { "position": 100, "color": "EE5A24" }], "angle": 180 },
+          "text": [
+            { "text": "Chapter 1", "fontSize": 14, "color": "FFD4C4" },
+            { "text": "The Beginning", "fontSize": 22, "bold": true, "color": "FFFFFF" },
+            { "text": "Every great journey starts with a single spark of inspiration.", "fontSize": 14, "color": "FFE0D0" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 15, "distance": 5, "angle": 45, "color": "000000", "opacity": 30 },
+          "animations": [{ "type": "flyIn", "direction": "left", "duration": 600, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 4.7, "y": 1.8, "w": 3.8, "h": 4 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "C850C0" }, { "position": 100, "color": "8E2DE2" }], "angle": 180 },
+          "text": [
+            { "text": "Chapter 2", "fontSize": 14, "color": "E8C8FF" },
+            { "text": "The Growth", "fontSize": 22, "bold": true, "color": "FFFFFF" },
+            { "text": "Building momentum through creativity and bold experimentation.", "fontSize": 14, "color": "E0C8FF" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 15, "distance": 5, "angle": 45, "color": "000000", "opacity": 30 },
+          "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 600, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 8.9, "y": 1.8, "w": 3.8, "h": 4 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "4158D0" }, { "position": 100, "color": "0ABDE3" }], "angle": 180 },
+          "text": [
+            { "text": "Chapter 3", "fontSize": 14, "color": "C8E8FF" },
+            { "text": "The Future", "fontSize": 22, "bold": true, "color": "FFFFFF" },
+            { "text": "A horizon of possibilities waiting to be explored.", "fontSize": 14, "color": "C8E0FF" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 15, "distance": 5, "angle": 45, "color": "000000", "opacity": 30 },
+          "animations": [{ "type": "flyIn", "direction": "right", "duration": 600, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "rect",
+          "position": { "x": 0.5, "y": 6.3, "w": 12.3, "h": 0.06 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "FF6B6B" }, { "position": 50, "color": "C850C0" }, { "position": 100, "color": "4158D0" }], "angle": 90 }
+        }
+      ]
+    },
+    {
+      "background": { "type": "gradient", "stops": [{ "position": 0, "color": "F0756E" }, { "position": 50, "color": "6B2D5B" }, { "position": 100, "color": "2D1B33" }], "angle": 160 },
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": -3, "y": -2, "w": 7, "h": 7 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "FFD93D" }, { "position": 100, "color": "FF6B6B" }], "angle": 135 },
+          "rotation": 0
+        },
+        {
+          "type": "text",
+          "text": "Let's Create Together",
+          "position": { "x": 2, "y": 2.2, "w": 10, "h": 1.5 },
+          "fontSize": 48,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 900, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "text",
+          "text": "hello@studio.com  •  @studio",
+          "position": { "x": 2, "y": 4, "w": 10, "h": 0.7 },
+          "fontSize": 20,
+          "color": "FFD4C4",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 600, "trigger": "afterPrevious", "delay": 300 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 4.4, "y": 5.2, "w": 4.5, "h": 0.8 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "FFD93D" }, { "position": 100, "color": "FF6B6B" }], "angle": 90 },
+          "text": "Get in Touch",
+          "fontSize": 18,
+          "bold": true,
+          "color": "2D1B33",
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [{ "type": "zoomIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        }
+      ]
+    }
+  ]
+}

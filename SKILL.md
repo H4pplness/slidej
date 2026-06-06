@@ -71,13 +71,19 @@ slidej generate deck.json -o presentation.pptx
 
 ### Available built-in templates
 
-| Template | Slides | Use case |
-|----------|--------|----------|
-| `title-slide` | 1 | Single hero title with subtitle and CTA |
-| `pitch-deck` | 5 | Startup pitch: title → problem → solution → traction → CTA |
-| `report` | 4 | Business report: cover → key findings → breakdown → summary |
-| `minimal` | 3 | Clean white, minimal styling, no gradients |
-| `dark-modern` | 3 | Dark theme with neon gradient accents |
+Each template is a **style guide** with example slides. The included slides are reference only — add, remove, or rearrange freely. Run `slidej template info <name>` to see the full style guide (palette, layout, components, animations, customization tips).
+
+| Template | Style | Best for |
+|----------|-------|----------|
+| `title-slide` | Dark hero, centered | Title screens, section dividers, closing CTAs |
+| `pitch-deck` | Professional dark-to-light | Pitches, proposals, product launches |
+| `report` | Clean corporate, tables | Quarterly reports, reviews, dashboards |
+| `minimal` | Whitespace, typography | Academic talks, briefings, text-heavy content |
+| `dark-modern` | Dark UI, gradient accents | Tech products, SaaS demos, developer tools |
+| `sunset-wave` | Warm gradients, organic shapes | Creative portfolios, storytelling, brand narratives |
+| `candy-pop` | Bold pop-art on white | Events, campaigns, youth-oriented content |
+| `ocean-aurora` | Deep cool-tone, glow | Tech showcases, science, premium branding |
+| `neon-garden` | Neon-on-black, high contrast | Creative agencies, art portfolios, entertainment |
 
 ### Create from scratch
 

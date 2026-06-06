@@ -1,0 +1,60 @@
+{
+  "name": "title-slide",
+  "description": "A single hero title slide with centered heading, subtitle, and a CTA button. Dark background with fade-in animations.",
+  "tags": ["title", "hero", "single-slide"],
+  "width": 13.333,
+  "height": 7.5,
+  "meta": { "title": "Presentation Title", "author": "Author" },
+  "theme": {
+    "colors": { "accent1": "4472C4", "dk1": "000000", "lt1": "FFFFFF" },
+    "majorFont": "Calibri Light",
+    "minorFont": "Calibri"
+  },
+  "slides": [
+    {
+      "background": "0B1D3A",
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "text",
+          "text": "Your Presentation Title",
+          "position": { "x": 1.5, "y": 2.2, "w": 10.3, "h": 1.5 },
+          "fontSize": 52,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "center",
+          "fontFamily": "Calibri Light",
+          "animations": [
+            { "type": "fadeIn", "duration": 800, "trigger": "afterPrevious" }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "A brief subtitle or tagline goes here",
+          "position": { "x": 2.5, "y": 3.9, "w": 8.3, "h": 0.8 },
+          "fontSize": 22,
+          "color": "7EB8DA",
+          "align": "center",
+          "animations": [
+            { "type": "fadeIn", "duration": 600, "trigger": "afterPrevious", "delay": 300 }
+          ]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 4.8, "y": 5.2, "w": 3.7, "h": 0.8 },
+          "fill": "4472C4",
+          "line": { "color": "3461B3", "width": 1 },
+          "text": "Get Started",
+          "fontSize": 18,
+          "color": "FFFFFF",
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [
+            { "type": "flyIn", "direction": "bottom", "duration": 500, "trigger": "afterPrevious", "delay": 200 }
+          ]
+        }
+      ]
+    }
+  ]
+}

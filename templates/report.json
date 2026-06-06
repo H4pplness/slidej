@@ -1,0 +1,218 @@
+{
+  "name": "report",
+  "description": "A 4-slide business report template: cover, key findings with table, detailed breakdown, and summary. Clean white theme with subtle animations.",
+  "tags": ["report", "business", "data", "table"],
+  "width": 13.333,
+  "height": 7.5,
+  "meta": { "title": "Business Report", "author": "Author" },
+  "theme": {
+    "colors": { "accent1": "2C3E50", "accent2": "3498DB", "dk1": "000000", "lt1": "FFFFFF" },
+    "majorFont": "Calibri Light",
+    "minorFont": "Calibri"
+  },
+  "slides": [
+    {
+      "background": "2C3E50",
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "shape",
+          "shapeType": "rect",
+          "position": { "x": 0, "y": 0, "w": 5, "h": 7.5 },
+          "fill": "1A252F"
+        },
+        {
+          "type": "text",
+          "text": "Quarterly Report",
+          "position": { "x": 5.5, "y": 2, "w": 7, "h": 1.5 },
+          "fontSize": 44,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "left",
+          "animations": [{ "type": "fadeIn", "duration": 700, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "text",
+          "text": "Q4 2024 — Performance Summary",
+          "position": { "x": 5.5, "y": 3.6, "w": 7, "h": 0.7 },
+          "fontSize": 20,
+          "color": "95A5A6",
+          "align": "left",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "text",
+          "text": "Prepared by: Your Name\nDate: January 2025",
+          "position": { "x": 5.5, "y": 5, "w": 7, "h": 1 },
+          "fontSize": 14,
+          "color": "7F8C8D",
+          "align": "left"
+        }
+      ]
+    },
+    {
+      "background": "FFFFFF",
+      "transition": { "type": "push", "speed": "med" },
+      "elements": [
+        {
+          "type": "text",
+          "text": "Key Findings",
+          "position": { "x": 0.5, "y": 0.4, "w": 12.3, "h": 0.9 },
+          "fontSize": 32,
+          "bold": true,
+          "color": "2C3E50",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "rect",
+          "position": { "x": 0.5, "y": 1.2, "w": 12.3, "h": 0.05 },
+          "fill": "3498DB"
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 0.5, "y": 1.7, "w": 3.8, "h": 1.8 },
+          "fill": "F8F9FA",
+          "line": { "color": "E0E0E0", "width": 1 },
+          "text": [
+            { "text": "Revenue", "fontSize": 14, "color": "7F8C8D" },
+            { "text": "$2.4M", "fontSize": 32, "bold": true, "color": "27AE60" },
+            { "text": "+18% vs last quarter", "fontSize": 12, "color": "95A5A6" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [{ "type": "fadeIn", "duration": 400, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 4.7, "y": 1.7, "w": 3.8, "h": 1.8 },
+          "fill": "F8F9FA",
+          "line": { "color": "E0E0E0", "width": 1 },
+          "text": [
+            { "text": "Customers", "fontSize": 14, "color": "7F8C8D" },
+            { "text": "1,250", "fontSize": 32, "bold": true, "color": "2980B9" },
+            { "text": "+95 new this quarter", "fontSize": 12, "color": "95A5A6" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [{ "type": "fadeIn", "duration": 400, "trigger": "afterPrevious", "delay": 150 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 8.9, "y": 1.7, "w": 3.8, "h": 1.8 },
+          "fill": "F8F9FA",
+          "line": { "color": "E0E0E0", "width": 1 },
+          "text": [
+            { "text": "Satisfaction", "fontSize": 14, "color": "7F8C8D" },
+            { "text": "94%", "fontSize": 32, "bold": true, "color": "8E44AD" },
+            { "text": "+3% improvement", "fontSize": 12, "color": "95A5A6" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [{ "type": "fadeIn", "duration": 400, "trigger": "afterPrevious", "delay": 150 }]
+        },
+        {
+          "type": "table",
+          "position": { "x": 0.5, "y": 4, "w": 12.3, "h": 3 },
+          "headerRow": true,
+          "fontSize": 13,
+          "rows": [
+            [
+              { "text": "Metric", "bold": true, "fill": "2C3E50", "color": "FFFFFF" },
+              { "text": "Q3 2024", "bold": true, "fill": "2C3E50", "color": "FFFFFF" },
+              { "text": "Q4 2024", "bold": true, "fill": "2C3E50", "color": "FFFFFF" },
+              { "text": "Change", "bold": true, "fill": "2C3E50", "color": "FFFFFF" }
+            ],
+            ["Revenue", "$2.03M", "$2.4M", "+18%"],
+            ["Active Users", "8,500", "10,200", "+20%"],
+            ["Churn Rate", "5.2%", "4.1%", "-1.1%"],
+            ["NPS Score", "72", "78", "+6"]
+          ]
+        }
+      ]
+    },
+    {
+      "background": "FFFFFF",
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "text",
+          "text": "Detailed Breakdown",
+          "position": { "x": 0.5, "y": 0.4, "w": 12.3, "h": 0.9 },
+          "fontSize": 32,
+          "bold": true,
+          "color": "2C3E50",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "rect",
+          "position": { "x": 0.5, "y": 1.2, "w": 12.3, "h": 0.05 },
+          "fill": "3498DB"
+        },
+        {
+          "type": "text",
+          "text": [
+            { "text": "Key Highlights", "fontSize": 20, "bold": true, "color": "2C3E50" },
+            { "text": "Revenue exceeded target by 12%, driven by enterprise segment growth.", "bullet": true, "fontSize": 16, "color": "555555" },
+            { "text": "Customer acquisition cost decreased by 8% through organic channels.", "bullet": true, "fontSize": 16, "color": "555555" },
+            { "text": "Product NPS improved from 72 to 78, highest in company history.", "bullet": true, "fontSize": 16, "color": "555555" },
+            { "text": "Churn rate dropped to 4.1%, below the 5% target.", "bullet": true, "fontSize": 16, "color": "555555" }
+          ],
+          "position": { "x": 0.5, "y": 1.6, "w": 5.9, "h": 5 },
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "text",
+          "text": [
+            { "text": "Areas for Improvement", "fontSize": 20, "bold": true, "color": "2C3E50" },
+            { "text": "Support response time averaged 4.2 hours, above 3-hour SLA.", "bullet": true, "fontSize": 16, "color": "555555" },
+            { "text": "Mobile conversion rate remains 15% below desktop.", "bullet": true, "fontSize": 16, "color": "555555" },
+            { "text": "APAC region underperformed revenue targets by 7%.", "bullet": true, "fontSize": 16, "color": "555555" }
+          ],
+          "position": { "x": 6.8, "y": 1.6, "w": 5.9, "h": 5 },
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        }
+      ]
+    },
+    {
+      "background": "2C3E50",
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "text",
+          "text": "Summary & Next Steps",
+          "position": { "x": 1, "y": 1.5, "w": 11.3, "h": 1.2 },
+          "fontSize": 40,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 600, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "text",
+          "text": [
+            { "text": "1. Scale enterprise sales team by Q1 2025", "fontSize": 18, "color": "BDC3C7" },
+            { "text": "2. Invest in mobile experience optimization", "fontSize": 18, "color": "BDC3C7" },
+            { "text": "3. Expand APAC go-to-market strategy", "fontSize": 18, "color": "BDC3C7" },
+            { "text": "4. Reduce support response time to under 3 hours", "fontSize": 18, "color": "BDC3C7" }
+          ],
+          "position": { "x": 2, "y": 3.2, "w": 9.3, "h": 3 },
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious", "delay": 300 }]
+        },
+        {
+          "type": "text",
+          "text": "Questions?  —  your.email@company.com",
+          "position": { "x": 2, "y": 6.2, "w": 9.3, "h": 0.6 },
+          "fontSize": 16,
+          "color": "7F8C8D",
+          "align": "center"
+        }
+      ]
+    }
+  ]
+}

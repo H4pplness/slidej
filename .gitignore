@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Generated SlideJ outputs
+*.pptx
+*.parsed.json
+output.*
+example.json
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime/cache
+.cache/
+.tmp/
+tmp/
+temp/
+
+# Environment
+.env
+.env.*
+
+# Editor/OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,232 @@
+{
+  "name": "pitch-deck",
+  "description": "A 5-slide startup pitch deck: title, problem, solution, traction/metrics, and CTA. Professional dark-to-light theme with staggered animations.",
+  "tags": ["pitch", "startup", "business", "multi-slide"],
+  "width": 13.333,
+  "height": 7.5,
+  "meta": { "title": "Pitch Deck", "author": "Startup Name" },
+  "theme": {
+    "colors": { "accent1": "6C5CE7", "accent2": "00B894", "dk1": "000000", "lt1": "FFFFFF" },
+    "majorFont": "Calibri Light",
+    "minorFont": "Calibri"
+  },
+  "slides": [
+    {
+      "background": "0B1D3A",
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "text",
+          "text": "Company Name",
+          "position": { "x": 1, "y": 2, "w": 11.3, "h": 1.5 },
+          "fontSize": 56,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 800, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "text",
+          "text": "One-line description of what you do",
+          "position": { "x": 2, "y": 3.8, "w": 9.3, "h": 0.8 },
+          "fontSize": 24,
+          "color": "7EB8DA",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 600, "trigger": "afterPrevious", "delay": 300 }]
+        }
+      ]
+    },
+    {
+      "background": "FFFFFF",
+      "transition": { "type": "push", "speed": "med" },
+      "elements": [
+        {
+          "type": "text",
+          "text": "The Problem",
+          "position": { "x": 0.5, "y": 0.4, "w": 12.3, "h": 1 },
+          "fontSize": 36,
+          "bold": true,
+          "color": "2D3436",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 0.5, "y": 1.8, "w": 5.9, "h": 2.5 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "E17055" }, { "position": 100, "color": "D63031" }], "angle": 135 },
+          "text": [
+            { "text": "Pain Point 1", "fontSize": 20, "bold": true, "color": "FFFFFF" },
+            { "text": "Describe the problem your users face", "fontSize": 14, "color": "FFDDDD" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 8, "distance": 4, "angle": 45, "color": "000000", "opacity": 25 },
+          "animations": [{ "type": "flyIn", "direction": "left", "duration": 600, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 6.8, "y": 1.8, "w": 5.9, "h": 2.5 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "E17055" }, { "position": 100, "color": "D63031" }], "angle": 135 },
+          "text": [
+            { "text": "Pain Point 2", "fontSize": 20, "bold": true, "color": "FFFFFF" },
+            { "text": "Another problem worth solving", "fontSize": 14, "color": "FFDDDD" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 8, "distance": 4, "angle": 45, "color": "000000", "opacity": 25 },
+          "animations": [{ "type": "flyIn", "direction": "right", "duration": 600, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "text",
+          "text": "Summarize the core problem in one sentence.",
+          "position": { "x": 1, "y": 5, "w": 11.3, "h": 0.8 },
+          "fontSize": 18,
+          "italic": true,
+          "color": "636E72",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious", "delay": 300 }]
+        }
+      ]
+    },
+    {
+      "background": "FFFFFF",
+      "transition": { "type": "push", "speed": "med" },
+      "elements": [
+        {
+          "type": "text",
+          "text": "Our Solution",
+          "position": { "x": 0.5, "y": 0.4, "w": 12.3, "h": 1 },
+          "fontSize": 36,
+          "bold": true,
+          "color": "2D3436",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 0.5, "y": 1.8, "w": 3.8, "h": 3 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "6C5CE7" }, { "position": 100, "color": "5A4BD1" }], "angle": 135 },
+          "text": [
+            { "text": "Step 1", "fontSize": 20, "bold": true, "color": "FFFFFF" },
+            { "text": "How it works — first step", "fontSize": 13, "color": "D5CCFF" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 6, "distance": 3, "angle": 45, "color": "000000", "opacity": 20 },
+          "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 4.7, "y": 1.8, "w": 3.8, "h": 3 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "6C5CE7" }, { "position": 100, "color": "5A4BD1" }], "angle": 135 },
+          "text": [
+            { "text": "Step 2", "fontSize": 20, "bold": true, "color": "FFFFFF" },
+            { "text": "How it works — second step", "fontSize": 13, "color": "D5CCFF" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 6, "distance": 3, "angle": 45, "color": "000000", "opacity": 20 },
+          "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 8.9, "y": 1.8, "w": 3.8, "h": 3 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "6C5CE7" }, { "position": 100, "color": "5A4BD1" }], "angle": 135 },
+          "text": [
+            { "text": "Step 3", "fontSize": 20, "bold": true, "color": "FFFFFF" },
+            { "text": "How it works — third step", "fontSize": 13, "color": "D5CCFF" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "shadow": { "blur": 6, "distance": 3, "angle": 45, "color": "000000", "opacity": 20 },
+          "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        }
+      ]
+    },
+    {
+      "background": "F8F9FA",
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "text",
+          "text": "Traction & Metrics",
+          "position": { "x": 0.5, "y": 0.4, "w": 12.3, "h": 1 },
+          "fontSize": 36,
+          "bold": true,
+          "color": "2D3436",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 0.5, "y": 1.8, "w": 3.8, "h": 2.2 },
+          "fill": "00B894",
+          "text": [
+            { "text": "10K+", "fontSize": 36, "bold": true, "color": "FFFFFF" },
+            { "text": "Active Users", "fontSize": 14, "color": "D5FFF5" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [{ "type": "zoomIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 4.7, "y": 1.8, "w": 3.8, "h": 2.2 },
+          "fill": "0984E3",
+          "text": [
+            { "text": "150%", "fontSize": 36, "bold": true, "color": "FFFFFF" },
+            { "text": "MoM Growth", "fontSize": 14, "color": "CCE5FF" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [{ "type": "zoomIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 8.9, "y": 1.8, "w": 3.8, "h": 2.2 },
+          "fill": "6C5CE7",
+          "text": [
+            { "text": "$50K", "fontSize": 36, "bold": true, "color": "FFFFFF" },
+            { "text": "Monthly Revenue", "fontSize": 14, "color": "D5CCFF" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [{ "type": "zoomIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        }
+      ]
+    },
+    {
+      "background": "0B1D3A",
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "text",
+          "text": "Let's Talk",
+          "position": { "x": 1, "y": 2.2, "w": 11.3, "h": 1.5 },
+          "fontSize": 48,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 800, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "text",
+          "text": "email@company.com  |  www.company.com",
+          "position": { "x": 2, "y": 4, "w": 9.3, "h": 0.8 },
+          "fontSize": 20,
+          "color": "7EB8DA",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 600, "trigger": "afterPrevious", "delay": 300 }]
+        }
+      ]
+    }
+  ]
+}

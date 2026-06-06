@@ -1,0 +1,156 @@
+{
+  "name": "dark-modern",
+  "description": "A 3-slide modern dark template: hero title with gradient accent, feature showcase with icon-like shapes, and closing CTA. Neon accent colors on dark backgrounds.",
+  "tags": ["dark", "modern", "gradient", "neon"],
+  "width": 13.333,
+  "height": 7.5,
+  "meta": { "title": "Dark Modern Deck", "author": "Author" },
+  "theme": {
+    "colors": { "accent1": "00D2FF", "accent2": "7C4DFF", "dk1": "000000", "lt1": "FFFFFF" },
+    "majorFont": "Calibri Light",
+    "minorFont": "Calibri"
+  },
+  "slides": [
+    {
+      "background": { "type": "gradient", "stops": [{ "position": 0, "color": "0A0A1A" }, { "position": 100, "color": "1A1A3E" }], "angle": 135 },
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "shape",
+          "shapeType": "ellipse",
+          "position": { "x": 9, "y": -1, "w": 6, "h": 6 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "7C4DFF" }, { "position": 100, "color": "00D2FF" }], "angle": 45 },
+          "rotation": 0
+        },
+        {
+          "type": "text",
+          "text": "Bold Title Here",
+          "position": { "x": 0.8, "y": 2, "w": 8, "h": 1.8 },
+          "fontSize": 54,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "left",
+          "animations": [{ "type": "fadeIn", "duration": 800, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "text",
+          "text": "Subtitle with a modern edge — powered by creativity",
+          "position": { "x": 0.8, "y": 4, "w": 7, "h": 0.8 },
+          "fontSize": 20,
+          "color": "8899BB",
+          "align": "left",
+          "animations": [{ "type": "fadeIn", "duration": 600, "trigger": "afterPrevious", "delay": 300 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 0.8, "y": 5.5, "w": 3.5, "h": 0.8 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "7C4DFF" }, { "position": 100, "color": "00D2FF" }], "angle": 90 },
+          "text": "Explore More",
+          "fontSize": 16,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [{ "type": "flyIn", "direction": "left", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        }
+      ]
+    },
+    {
+      "background": "0A0A1A",
+      "transition": { "type": "push", "speed": "med" },
+      "elements": [
+        {
+          "type": "text",
+          "text": "What We Offer",
+          "position": { "x": 0.5, "y": 0.4, "w": 12.3, "h": 1 },
+          "fontSize": 36,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 0.5, "y": 1.8, "w": 3.8, "h": 3.5 },
+          "fill": "12122B",
+          "line": { "color": "7C4DFF", "width": 2 },
+          "text": [
+            { "text": "Design", "fontSize": 22, "bold": true, "color": "00D2FF" },
+            { "text": "Beautiful interfaces built with precision and purpose", "fontSize": 14, "color": "8899BB" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 4.7, "y": 1.8, "w": 3.8, "h": 3.5 },
+          "fill": "12122B",
+          "line": { "color": "00D2FF", "width": 2 },
+          "text": [
+            { "text": "Develop", "fontSize": 22, "bold": true, "color": "7C4DFF" },
+            { "text": "Scalable solutions engineered for performance", "fontSize": 14, "color": "8899BB" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 8.9, "y": 1.8, "w": 3.8, "h": 3.5 },
+          "fill": "12122B",
+          "line": { "color": "00B894", "width": 2 },
+          "text": [
+            { "text": "Deliver", "fontSize": 22, "bold": true, "color": "00B894" },
+            { "text": "On-time execution with measurable results", "fontSize": 14, "color": "8899BB" }
+          ],
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        }
+      ]
+    },
+    {
+      "background": { "type": "gradient", "stops": [{ "position": 0, "color": "1A1A3E" }, { "position": 100, "color": "0A0A1A" }], "angle": 135 },
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "text",
+          "text": "Ready to Start?",
+          "position": { "x": 1, "y": 2.2, "w": 11.3, "h": 1.5 },
+          "fontSize": 48,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 800, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "text",
+          "text": "hello@company.com  |  @company",
+          "position": { "x": 2, "y": 4, "w": 9.3, "h": 0.8 },
+          "fontSize": 20,
+          "color": "7C4DFF",
+          "align": "center",
+          "animations": [{ "type": "fadeIn", "duration": 600, "trigger": "afterPrevious", "delay": 300 }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "roundRect",
+          "position": { "x": 4.4, "y": 5.2, "w": 4.5, "h": 0.8 },
+          "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "7C4DFF" }, { "position": 100, "color": "00D2FF" }], "angle": 90 },
+          "text": "Contact Us",
+          "fontSize": 18,
+          "bold": true,
+          "color": "FFFFFF",
+          "align": "center",
+          "vertAlign": "middle",
+          "animations": [{ "type": "zoomIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        }
+      ]
+    }
+  ]
+}

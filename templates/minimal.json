@@ -1,0 +1,112 @@
+{
+  "name": "minimal",
+  "description": "A clean 3-slide minimal template: title, content with bullets, and closing. White background, minimal styling, no gradients.",
+  "tags": ["minimal", "clean", "simple", "light"],
+  "width": 13.333,
+  "height": 7.5,
+  "meta": { "title": "Minimal Presentation", "author": "Author" },
+  "theme": {
+    "colors": { "accent1": "333333", "dk1": "000000", "lt1": "FFFFFF" },
+    "majorFont": "Calibri Light",
+    "minorFont": "Calibri"
+  },
+  "slides": [
+    {
+      "background": "FFFFFF",
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "shape",
+          "shapeType": "rect",
+          "position": { "x": 0.5, "y": 3.5, "w": 3, "h": 0.06 },
+          "fill": "333333"
+        },
+        {
+          "type": "text",
+          "text": "Presentation Title",
+          "position": { "x": 0.5, "y": 1.5, "w": 10, "h": 1.8 },
+          "fontSize": 48,
+          "bold": true,
+          "color": "1A1A1A",
+          "align": "left",
+          "animations": [{ "type": "fadeIn", "duration": 600, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "text",
+          "text": "Subtitle or date goes here",
+          "position": { "x": 0.5, "y": 3.8, "w": 10, "h": 0.8 },
+          "fontSize": 20,
+          "color": "999999",
+          "align": "left",
+          "animations": [{ "type": "fadeIn", "duration": 400, "trigger": "afterPrevious", "delay": 200 }]
+        }
+      ]
+    },
+    {
+      "background": "FFFFFF",
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "text",
+          "text": "Section Title",
+          "position": { "x": 0.5, "y": 0.5, "w": 12, "h": 1 },
+          "fontSize": 32,
+          "bold": true,
+          "color": "1A1A1A",
+          "align": "left",
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "shape",
+          "shapeType": "rect",
+          "position": { "x": 0.5, "y": 1.4, "w": 2, "h": 0.05 },
+          "fill": "333333"
+        },
+        {
+          "type": "text",
+          "text": [
+            { "text": "First key point — explain your idea clearly and concisely.", "bullet": true },
+            { "text": "Second key point — provide supporting evidence or data.", "bullet": true },
+            { "text": "Third key point — describe the impact or next steps.", "bullet": true }
+          ],
+          "position": { "x": 0.5, "y": 2, "w": 11, "h": 4 },
+          "fontSize": 20,
+          "color": "444444",
+          "lineSpacing": 1.6,
+          "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
+        }
+      ]
+    },
+    {
+      "background": "FFFFFF",
+      "transition": { "type": "fade", "speed": "med" },
+      "elements": [
+        {
+          "type": "shape",
+          "shapeType": "rect",
+          "position": { "x": 0.5, "y": 3.5, "w": 3, "h": 0.06 },
+          "fill": "333333"
+        },
+        {
+          "type": "text",
+          "text": "Thank You",
+          "position": { "x": 0.5, "y": 1.8, "w": 10, "h": 1.5 },
+          "fontSize": 48,
+          "bold": true,
+          "color": "1A1A1A",
+          "align": "left",
+          "animations": [{ "type": "fadeIn", "duration": 600, "trigger": "afterPrevious" }]
+        },
+        {
+          "type": "text",
+          "text": "your.email@example.com",
+          "position": { "x": 0.5, "y": 3.8, "w": 10, "h": 0.7 },
+          "fontSize": 18,
+          "color": "999999",
+          "align": "left",
+          "animations": [{ "type": "fadeIn", "duration": 400, "trigger": "afterPrevious", "delay": 200 }]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "slidej",
+  "version": "1.0.0",
+  "description": "Generate PPTX from JSON. Parse PPTX back to JSON.",
+  "main": "src/index.js",
+  "bin": {
+    "slidej": "./src/cli.js"
+  },
+  "scripts": {
+    "generate": "node src/cli.js generate",
+    "parse": "node src/cli.js parse",
+    "test": "node src/cli.js example -o /tmp/test.json && node src/cli.js generate /tmp/test.json -o /tmp/test.pptx && node src/cli.js parse /tmp/test.pptx --no-images"
+  },
+  "keywords": ["pptx", "powerpoint", "slides", "animation", "cli", "json"],
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^12.0.0",
+    "fast-xml-parser": "^4.3.0",
+    "jszip": "^3.10.0"
+  }
+}

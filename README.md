@@ -20,14 +20,22 @@ A JSON-first CLI tool for generating PowerPoint (.pptx) presentations and parsin
 
 ## Installation
 
+### From npm (recommended)
+
 ```bash
-git clone https://github.com/your-username/slidej.git
+npm install -g slidej
+```
+
+After installation, the `slidej` command is available globally in your terminal.
+
+### From source
+
+```bash
+git clone https://github.com/Sukun444/slidej.git
 cd slidej
 npm install
 npm link
 ```
-
-After `npm link`, the `slidej` command is available globally in your terminal.
 
 ## Quick Start
 

@@ -20,14 +20,22 @@ Công cụ CLI tạo file PowerPoint (.pptx) từ JSON và phân tích ngược 
 
 ## Cài đặt
 
+### Từ npm (khuyến nghị)
+
 ```bash
-git clone https://github.com/your-username/slidej.git
+npm install -g slidej
+```
+
+Sau khi cài đặt, lệnh `slidej` có thể dùng trực tiếp từ bất kỳ thư mục nào trong terminal.
+
+### Từ mã nguồn
+
+```bash
+git clone https://github.com/Sukun444/slidej.git
 cd slidej
 npm install
 npm link
 ```
-
-Sau khi chạy `npm link`, lệnh `slidej` có thể dùng trực tiếp từ bất kỳ thư mục nào trong terminal.
 
 ## Bắt đầu nhanh
 

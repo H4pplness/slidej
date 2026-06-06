@@ -621,6 +621,7 @@ function parseParagraphs(txBody) {
         if (rPr['@_i'] === '1') run.italic = true;
         if (rPr['@_u'] === 'sng') run.underline = true;
         if (rPr['@_strike'] === 'sngStrike') run.strike = true;
+        if (rPr['@_spc'] != null) run.letterSpacing = parseInt(rPr['@_spc']) / 100;
         run.color = extractColor(rPr['a:solidFill']);
         const latin = rPr['a:latin'];
         if (latin) run.fontFamily = latin['@_typeface'];

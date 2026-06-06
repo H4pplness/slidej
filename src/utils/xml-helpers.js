@@ -99,6 +99,7 @@ function runPropsXml(style = {}) {
   if (style.italic) attrs.push('i="1"');
   if (style.underline) attrs.push('u="sng"');
   if (style.strike) attrs.push('strike="sngStrike"');
+  if (style.letterSpacing != null) attrs.push(`spc="${Math.round(style.letterSpacing * 100)}"`);
   attrs.push('dirty="0"');
 
   let inner = '';

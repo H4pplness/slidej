@@ -114,7 +114,7 @@ program
   .description('Print the JSON schema reference')
   .action(() => {
     console.log(chalk.bold.blue('\n═══ SlideJ JSON Schema ═══\n'));
-    console.log(fs.readFileSync(path.join(__dirname, '..', 'SCHEMA.md'), 'utf-8'));
+    console.log(fs.readFileSync(path.join(__dirname, 'SCHEMA.md'), 'utf-8'));
   });
 
 // ============================================================

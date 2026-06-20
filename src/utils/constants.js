@@ -48,20 +48,37 @@ const CONTENT_TYPES = {
 // Animation presets
 // ============================================================
 const ANIMATION_PRESETS = {
+  // --- Entrance ---
   appear:    { presetID: 1,  presetClass: 'entr', filter: null },
   fadeIn:    { presetID: 10, presetClass: 'entr', filter: 'fade' },
+  flyIn:     { presetID: 2,  presetClass: 'entr', filter: null },
+  wipeIn:    { presetID: 22, presetClass: 'entr', filter: 'wipe(down)' },
+  zoomIn:    { presetID: 53, presetClass: 'entr', filter: null },
+  splitIn:   { presetID: 16, presetClass: 'entr', filter: 'barn(inVertical)' },
+  bounceIn:  { presetID: 26, presetClass: 'entr', filter: null },
+  floatIn:   { presetID: 31, presetClass: 'entr', filter: 'fade' },
+  swivel:    { presetID: 18, presetClass: 'entr', filter: 'fade' },
+  dissolveIn:{ presetID: 9,  presetClass: 'entr', filter: 'dissolve' },
+
+  // --- Exit ---
   fadeOut:   { presetID: 10, presetClass: 'exit', filter: 'fade' },
-  flyIn:    { presetID: 2,  presetClass: 'entr', filter: null },
-  flyOut:   { presetID: 2,  presetClass: 'exit', filter: null },
-  wipeIn:   { presetID: 22, presetClass: 'entr', filter: 'wipe(down)' },
-  wipeOut:  { presetID: 22, presetClass: 'exit', filter: 'wipe(down)' },
-  zoomIn:   { presetID: 53, presetClass: 'entr', filter: null },
-  zoomOut:  { presetID: 53, presetClass: 'exit', filter: null },
-  splitIn:  { presetID: 16, presetClass: 'entr', filter: 'barn(inVertical)' },
-  bounceIn: { presetID: 26, presetClass: 'entr', filter: null },
-  pulse:    { presetID: 26, presetClass: 'emph', filter: null },
-  spin:     { presetID: 8,  presetClass: 'emph', filter: null },
-  growShrink:{ presetID: 6, presetClass: 'emph', filter: null },
+  flyOut:    { presetID: 2,  presetClass: 'exit', filter: null },
+  wipeOut:   { presetID: 22, presetClass: 'exit', filter: 'wipe(down)' },
+  zoomOut:   { presetID: 53, presetClass: 'exit', filter: null },
+  floatOut:  { presetID: 31, presetClass: 'exit', filter: 'fade' },
+  dissolveOut:{ presetID: 9, presetClass: 'exit', filter: 'dissolve' },
+
+  // --- Emphasis ---
+  pulse:        { presetID: 26, presetClass: 'emph', filter: null },
+  spin:         { presetID: 8,  presetClass: 'emph', filter: null },
+  growShrink:   { presetID: 6,  presetClass: 'emph', filter: null },
+  colorChange:  { presetID: 2,  presetClass: 'emph', filter: null },
+  transparency: { presetID: 19, presetClass: 'emph', filter: null },
+  teeter:       { presetID: 21, presetClass: 'emph', filter: null },
+  blink:        { presetID: 38, presetClass: 'emph', filter: null },
+
+  // --- Motion path ---
+  motionPath:   { presetID: 0,  presetClass: 'path', filter: null },
 };
 
 // Direction subtypes for flyIn/flyOut
@@ -107,6 +124,15 @@ const SHAPE_TYPES = {
   lightningBolt: 'lightningBolt',
   callout1: 'wedgeRoundRectCallout',
   callout2: 'wedgeEllipseCallout',
+  chevron: 'chevron',
+  donut: 'donut',
+  blockArc: 'blockArc',
+  arc: 'arc',
+  pie: 'pie',
+  plaque: 'plaque',
+  can: 'can',
+  parallelogram: 'parallelogram',
+  trapezoid: 'trapezoid',
 };
 
 // ============================================================

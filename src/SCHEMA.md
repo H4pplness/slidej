@@ -134,6 +134,8 @@
   "line": { "color": "333333", "width": 2, "dash": "dash" },
   "shadow": { ... },
   "rotation": 45,
+  "noFill": true,                  // render with no fill (outline only)
+  "adjust": { "adj": 12000 },      // preset-geometry adjust values (e.g. roundRect corner, chevron notch)
 
   // Optional text inside shape:
   "text": "Click me",
@@ -148,7 +150,8 @@
 
 **Shape Types:** `rect`, `roundRect`, `ellipse`, `triangle`, `diamond`, `pentagon`,
 `hexagon`, `octagon`, `star5`, `star6`, `rightArrow`, `leftArrow`, `upArrow`,
-`downArrow`, `line`, `cloud`, `heart`, `lightningBolt`, `callout1`, `callout2`
+`downArrow`, `line`, `cloud`, `heart`, `lightningBolt`, `callout1`, `callout2`,
+`chevron`, `donut`, `blockArc`, `arc`, `pie`, `plaque`, `can`, `parallelogram`, `trapezoid`
 
 ### Image
 
@@ -211,6 +214,105 @@
 }
 ```
 
+## Components (high-level, self-drawn)
+
+Components are convenience element types that expand into a `group` of primitive
+shapes/text. Put them directly in a slide's `elements`. They accept `position`
+(inches) and optional `animations` (applied to the whole component as one unit).
+
+### progressBar
+```json
+{
+  "type": "progressBar",
+  "position": { "x": 1, "y": 1, "w": 5, "h": 0.5 },
+  "value": 72,                 // 0–100
+  "color": "accent1",          // filled portion
+  "trackColor": "E6E6E6",
+  "rounded": true,
+  "showLabel": true,           // shows "72%" (or custom "label")
+  "label": "72%", "textColor": "FFFFFF"
+}
+```
+
+### progressRing
+```json
+{
+  "type": "progressRing",
+  "position": { "x": 1, "y": 1, "w": 2, "h": 2 },
+  "value": 65,                 // 0–100
+  "color": "70AD47",
+  "trackColor": "E6E6E6",
+  "thickness": 0.16,           // ring thickness as fraction of radius (0.02–0.45)
+  "showLabel": true, "textColor": "70AD47"
+}
+```
+
+### barChart  (vertical columns)
+```json
+{
+  "type": "barChart",
+  "position": { "x": 1, "y": 3, "w": 6, "h": 3 },
+  "data": [40, 70, 55, 90],
+  "labels": ["Q1", "Q2", "Q3", "Q4"],
+  "colors": ["4472C4", "5B9BD5", "70AD47", "ED7D31"],  // or "color": "accent1"
+  "max": 100,                  // optional, defaults to max(data)
+  "showValues": true,
+  "axis": true, "axisColor": "BFBFBF",
+  "labelColor": "595959"
+}
+```
+
+### kpiCard
+```json
+{
+  "type": "kpiCard",
+  "position": { "x": 1, "y": 1, "w": 3, "h": 1.5 },
+  "value": "$1.2M",
+  "label": "Revenue",
+  "delta": "+12%",             // optional; green if positive, red if "-"
+  "accent": "5B9BD5",          // left stripe + value color
+  "bg": "FFFFFF",
+  "valueColor": "1F1F1F", "labelColor": "808080"
+}
+```
+
+### ratingStars
+```json
+{
+  "type": "ratingStars",
+  "position": { "x": 1, "y": 1, "w": 4, "h": 0.9 },
+  "rating": 4, "max": 5,
+  "color": "FFC000", "emptyColor": "D9D9D9", "gap": 0.25
+}
+```
+
+### timeline  (horizontal)
+```json
+{
+  "type": "timeline",
+  "position": { "x": 1, "y": 1.5, "w": 11, "h": 2 },
+  "items": [
+    { "label": "2021", "sub": "Founded" },
+    { "label": "2022", "sub": "Seed" }
+  ],
+  "lineColor": "CCCCCC", "dotColor": "accent1",
+  "colors": ["4472C4", "70AD47"],   // optional per-dot colors
+  "labelColor": "404040"
+}
+```
+
+### processFlow  (chevron steps)
+```json
+{
+  "type": "processFlow",
+  "position": { "x": 1, "y": 5, "w": 6, "h": 0.8 },
+  "steps": ["Plan", "Build", "Test", "Ship"],
+  "colors": ["4472C4", "5B9BD5", "70AD47", "ED7D31"],  // or "color"
+  "shape": "chevron",          // or "rect", "roundRect"
+  "textColor": "FFFFFF"
+}
+```
+
 ## Animations
 
 ```json
@@ -226,11 +328,22 @@
       // For fly animations:
       "direction": "left",          // top|right|bottom|left|topLeft|topRight|bottomLeft|bottomRight
 
-      // For spin:
+      // For spin / teeter:
       "degrees": 360,
 
       // For growShrink/pulse:
-      "scale": 110                  // percentage
+      "scale": 110,                 // percentage
+
+      // For colorChange:
+      "color": "ED7D31",            // target fill color (emphasis)
+
+      // For transparency:
+      "opacity": 30,                // target opacity %, emphasis
+
+      // For motionPath:
+      "points": [ { "x": 3, "y": 0 }, { "x": 6, "y": 1.2 } ],  // relative offsets in inches from start
+      // OR a directional line:
+      "path": "line", "direction": "right", "distance": 3
     }
   ]
 }
@@ -242,17 +355,28 @@
 |------|-------|-------------|
 | `appear` | Entrance | Instantly appear |
 | `fadeIn` | Entrance | Fade in |
-| `fadeOut` | Exit | Fade out |
 | `flyIn` | Entrance | Fly in from direction |
-| `flyOut` | Exit | Fly out to direction |
-| `wipeIn` | Entrance | Wipe reveal |
-| `wipeOut` | Exit | Wipe hide |
+| `wipeIn` | Entrance | Wipe reveal (use `direction`) |
 | `zoomIn` | Entrance | Zoom in from small |
+| `splitIn` | Entrance | Split/barn-door reveal |
+| `bounceIn` | Entrance | Bounce in with scale overshoot |
+| `floatIn` | Entrance | Fade + short vertical drift |
+| `swivel` | Entrance | Fade + horizontal unfold |
+| `dissolveIn` | Entrance | Dissolve in |
+| `fadeOut` | Exit | Fade out |
+| `flyOut` | Exit | Fly out to direction |
+| `wipeOut` | Exit | Wipe hide |
 | `zoomOut` | Exit | Zoom out to small |
-| `bounceIn` | Entrance | Bounce entrance |
+| `floatOut` | Exit | Fade + drift away |
+| `dissolveOut` | Exit | Dissolve out |
 | `pulse` | Emphasis | Pulse scale |
-| `spin` | Emphasis | Rotate |
-| `growShrink` | Emphasis | Scale up/down |
+| `spin` | Emphasis | Rotate (`degrees`) |
+| `growShrink` | Emphasis | Scale up/down (`scale`) |
+| `colorChange` | Emphasis | Animate fill to `color` |
+| `transparency` | Emphasis | Animate to `opacity` % |
+| `teeter` | Emphasis | Rocking rotation (`degrees`) |
+| `blink` | Emphasis | Quick hide/show toggle |
+| `motionPath` | Motion | Move along `points` or a `line` |
 
 **Trigger Types:**
 

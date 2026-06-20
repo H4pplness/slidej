@@ -314,13 +314,14 @@ function parseGraphicFrame(gf) {
       const cell = { text: '' };
       const txBody = tc['a:txBody'];
       if (txBody) {
-        const texts = [];
+        const paraTexts = [];
         for (const p of toArray(txBody['a:p'])) {
-          for (const r of toArray(p['a:r'])) {
-            texts.push(r['a:t'] || '');
-          }
+          const runs = toArray(p['a:r']).map(r => r['a:t'] || '');
+          // <a:br/> between runs are soft line breaks
+          const sep = toArray(p['a:br']).length > 0 ? '\n' : '';
+          paraTexts.push(runs.join(sep));
         }
-        cell.text = texts.join('');
+        cell.text = paraTexts.join('\n');
 
         // Cell text style
         const firstRun = toArray(txBody['a:p'])?.[0];
@@ -489,49 +490,16 @@ function parseEffectNode(node, order) {
 }
 
 function traverseForTarget(node, callback) {
-  // Check animEffect
-  const animEffect = node['p:animEffect'];
-  if (animEffect) {
-    const cBhvr = animEffect['p:cBhvr'];
-    const spid = cBhvr?.['p:tgtEl']?.['p:spTgt']?.['@_spid'];
-    const dur = cBhvr?.['p:cTn']?.['@_dur'];
-    callback(spid, dur);
-  }
-
-  // Check anim
-  const anim = node['p:anim'];
-  if (anim) {
-    const cBhvr = anim['p:cBhvr'];
-    const spid = cBhvr?.['p:tgtEl']?.['p:spTgt']?.['@_spid'];
-    const dur = cBhvr?.['p:cTn']?.['@_dur'];
-    callback(spid, dur);
-  }
-
-  // Check set
-  const set = node['p:set'];
-  if (set) {
-    const cBhvr = set['p:cBhvr'];
-    const spid = cBhvr?.['p:tgtEl']?.['p:spTgt']?.['@_spid'];
-    const dur = cBhvr?.['p:cTn']?.['@_dur'];
-    callback(spid, dur);
-  }
-
-  // Check animScale
-  const animScale = node['p:animScale'];
-  if (animScale) {
-    const cBhvr = animScale['p:cBhvr'];
-    const spid = cBhvr?.['p:tgtEl']?.['p:spTgt']?.['@_spid'];
-    const dur = cBhvr?.['p:cTn']?.['@_dur'];
-    callback(spid, dur);
-  }
-
-  // Check animRot
-  const animRot = node['p:animRot'];
-  if (animRot) {
-    const cBhvr = animRot['p:cBhvr'];
-    const spid = cBhvr?.['p:tgtEl']?.['p:spTgt']?.['@_spid'];
-    const dur = cBhvr?.['p:cTn']?.['@_dur'];
-    callback(spid, dur);
+  // All behavior node kinds that carry a <p:cBhvr> with a target shape.
+  // Any of them may appear multiple times (parsed as an array).
+  const behaviorKeys = ['p:animEffect', 'p:anim', 'p:set', 'p:animScale', 'p:animRot', 'p:animClr', 'p:animMotion'];
+  for (const key of behaviorKeys) {
+    for (const behavior of toArray(node[key])) {
+      const cBhvr = behavior['p:cBhvr'];
+      const spid = cBhvr?.['p:tgtEl']?.['p:spTgt']?.['@_spid'];
+      const dur = cBhvr?.['p:cTn']?.['@_dur'];
+      if (spid != null || dur != null) callback(spid, dur);
+    }
   }
 }
 
@@ -630,9 +598,30 @@ function parseParagraphs(txBody) {
       para.runs.push(run);
     }
 
+    // Soft line breaks (<a:br/>): if the paragraph is a set of uniformly-styled
+    // runs separated by breaks, collapse them back into one run with "\n".
+    const brCount = toArray(p['a:br']).length;
+    if (brCount > 0 && para.runs.length === brCount + 1 && runsSameStyle(para.runs)) {
+      const merged = { ...para.runs[0], text: para.runs.map(r => r.text).join('\n') };
+      para.runs = [merged];
+    }
+
     if (para.runs.length > 0) paragraphs.push(para);
   }
   return paragraphs;
+}
+
+/**
+ * True if all runs share the same styling (ignoring text) — used to merge
+ * line-break-separated runs back into a single multi-line run.
+ */
+function runsSameStyle(runs) {
+  const sig = (r) => {
+    const { text, ...rest } = r;
+    return JSON.stringify(rest);
+  };
+  const first = sig(runs[0]);
+  return runs.every(r => sig(r) === first);
 }
 
 function parseBackground(bg) {

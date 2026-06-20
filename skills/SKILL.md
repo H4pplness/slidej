@@ -340,10 +340,34 @@ Attach to any text, shape, or image element via the `animations` array:
 | `wipeOut` | Exit | Requires `direction` |
 | `zoomIn` | Entrance | Scale from 0% to 100% |
 | `zoomOut` | Exit | |
-| `bounceIn` | Entrance | |
+| `splitIn` | Entrance | Barn-door reveal |
+| `bounceIn` | Entrance | Scale overshoot |
+| `floatIn` / `floatOut` | Entrance / Exit | Fade + vertical drift |
+| `swivel` | Entrance | Fade + horizontal unfold |
+| `dissolveIn` / `dissolveOut` | Entrance / Exit | Dissolve |
 | `pulse` | Emphasis | Accepts `scale` (default 110) |
 | `spin` | Emphasis | Accepts `degrees` (default 360) |
 | `growShrink` | Emphasis | Accepts `scale` |
+| `colorChange` | Emphasis | Accepts `color` (target fill) |
+| `transparency` | Emphasis | Accepts `opacity` % |
+| `teeter` | Emphasis | Rocking rotation, accepts `degrees` |
+| `blink` | Emphasis | Quick hide/show |
+| `motionPath` | Motion | Accepts `points` (rel. inches) or `path:"line"` + `direction`/`distance` |
+
+### High-level components
+
+Convenience element types that expand into a group of shapes. Place in slide `elements`;
+accept `position` and `animations`. See SCHEMA.md for full fields.
+
+| Type | Key fields |
+|------|-----------|
+| `progressBar` | `value`, `color`, `trackColor`, `showLabel` |
+| `progressRing` | `value`, `color`, `trackColor`, `thickness` |
+| `barChart` | `data[]`, `labels[]`, `colors[]`, `showValues`, `axis` |
+| `kpiCard` | `value`, `label`, `delta`, `accent`, `bg` |
+| `ratingStars` | `rating`, `max`, `color`, `emptyColor` |
+| `timeline` | `items[{label,sub}]`, `dotColor`, `lineColor` |
+| `processFlow` | `steps[]`, `colors[]`, `shape` |
 
 ### Triggers
 

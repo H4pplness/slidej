@@ -93,10 +93,15 @@ async function generate(model, outputPath) {
   zip.file('ppt/slideLayouts/_rels/slideLayout1.xml.rels', generateSlideLayoutRels());
 
   // ppt/slides/
+  const slideSize = {
+    width: model.width || 13.333,
+    height: model.height || 7.5,
+  };
+
   for (let i = 0; i < slideCount; i++) {
     const slideData = slides[i];
     const { xml: slideRelsXml, rIdMap } = generateSlideRels(slideData);
-    const slideXml = generateSlide(slideData, rIdMap);
+    const slideXml = generateSlide(slideData, rIdMap, slideSize);
 
     zip.file(`ppt/slides/slide${i + 1}.xml`, slideXml);
     zip.file(`ppt/slides/_rels/slide${i + 1}.xml.rels`, slideRelsXml);

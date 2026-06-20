@@ -1,16 +1,22 @@
-const { XML_DECL, escXml, fillXml, lineXml, xfrmXml, runPropsXml, paraPropsXml } = require('../utils/xml-helpers');
-const { inchToEmu, SHAPE_TYPES, TRANSITIONS } = require('../utils/constants');
+const { XML_DECL, escXml, fillXml, lineXml, xfrmXml, avLstXml, runPropsXml, paraPropsXml } = require('../utils/xml-helpers');
+const { inchToEmu, SHAPE_TYPES, TRANSITIONS, DEFAULT_SLIDE_WIDTH, DEFAULT_SLIDE_HEIGHT } = require('../utils/constants');
 const { generateTiming } = require('./animation');
+const { expandComponents } = require('./components');
 
 /**
  * Generate a complete slide XML
  */
-function generateSlide(slideData, rIdMap) {
+function generateSlide(slideData, rIdMap, slideSize) {
+  const size = slideSize || { width: DEFAULT_SLIDE_WIDTH, height: DEFAULT_SLIDE_HEIGHT };
+
   let spIdCounter = 1;
   const getNextSpId = () => ++spIdCounter;
 
-  // Assign spId to each element
-  for (const el of slideData.elements || []) {
+  // Expand high-level components (progressBar, barChart, ...) into primitive elements
+  const elements = expandComponents(slideData.elements || []);
+
+  // Assign spId to each top-level element
+  for (const el of elements) {
     el._spId = getNextSpId();
   }
 
@@ -19,7 +25,7 @@ function generateSlide(slideData, rIdMap) {
   shapeTreeXml += `<p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>`;
   shapeTreeXml += `<p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr>`;
 
-  for (const el of slideData.elements || []) {
+  for (const el of elements) {
     switch (el.type) {
       case 'text':
         shapeTreeXml += generateTextShape(el);
@@ -34,7 +40,7 @@ function generateSlide(slideData, rIdMap) {
         shapeTreeXml += generateTable(el);
         break;
       case 'group':
-        shapeTreeXml += generateGroup(el, rIdMap);
+        shapeTreeXml += generateGroup(el, rIdMap, getNextSpId);
         break;
       default:
         console.warn(`Unknown element type: ${el.type}`);
@@ -48,8 +54,8 @@ function generateSlide(slideData, rIdMap) {
   }
 
   // Animation
-  const animatedEls = (slideData.elements || []).filter(el => el.animations && el.animations.length > 0);
-  const timingXml = generateTiming(animatedEls);
+  const animatedEls = elements.filter(el => el.animations && el.animations.length > 0);
+  const timingXml = generateTiming(animatedEls, size);
 
   // Transition
   let transitionXml = '';
@@ -120,8 +126,9 @@ function generateAutoShape(el) {
   const shapeType = SHAPE_TYPES[el.shapeType] || el.shapeType || 'rect';
 
   let spPrContent = xfrmXml(pos, el.rotation);
-  spPrContent += `<a:prstGeom prst="${shapeType}"><a:avLst/></a:prstGeom>`;
+  spPrContent += `<a:prstGeom prst="${shapeType}">${avLstXml(el.adjust)}</a:prstGeom>`;
   if (el.fill) spPrContent += fillXml(el.fill);
+  else if (el.fill === false || el.noFill) spPrContent += '<a:noFill/>';
   else spPrContent += '<a:solidFill><a:schemeClr val="accent1"/></a:solidFill>';
   if (el.line) spPrContent += lineXml(el.line);
   if (el.shadow) spPrContent += generateShadow(el.shadow);
@@ -207,18 +214,14 @@ function generateTable(el) {
       const color = cell.color || el.color || '000000';
       const align = cell.align || 'l';
 
+      const cellRPr = `<a:rPr lang="en-US" sz="${fontSize * 100}" ${bold} dirty="0"><a:solidFill><a:srgbClr val="${color.replace('#', '')}"/></a:solidFill></a:rPr>`;
       cellsXml += `<a:tc>
   <a:txBody>
     <a:bodyPr/>
     <a:lstStyle/>
     <a:p>
       <a:pPr algn="${align === 'center' ? 'ctr' : align === 'right' ? 'r' : 'l'}"/>
-      <a:r>
-        <a:rPr lang="en-US" sz="${fontSize * 100}" ${bold} dirty="0">
-          <a:solidFill><a:srgbClr val="${color.replace('#', '')}"/></a:solidFill>
-        </a:rPr>
-        <a:t>${escXml(cell.text || '')}</a:t>
-      </a:r>
+      ${textRunsXml(cell.text || '', cellRPr)}
     </a:p>
   </a:txBody>
   <a:tcPr>${cellFill}</a:tcPr>
@@ -254,13 +257,14 @@ function generateTable(el) {
 // ============================================================
 // GROUP
 // ============================================================
-function generateGroup(el, rIdMap) {
+function generateGroup(el, rIdMap, getNextSpId) {
   const pos = el.position || { x: 0, y: 0, w: 5, h: 5 };
   const spId = el._spId;
+  const nextId = getNextSpId || (() => spId + 100 + Math.floor(Math.random() * 1000));
   let childrenXml = '';
 
   for (const child of el.children || []) {
-    child._spId = spId + 100 + (el.children.indexOf(child));
+    child._spId = nextId();
     switch (child.type) {
       case 'text': childrenXml += generateTextShape(child); break;
       case 'shape': childrenXml += generateAutoShape(child); break;
@@ -290,12 +294,27 @@ function generateGroup(el, rIdMap) {
 // HELPERS
 // ============================================================
 
+/**
+ * Build run XML for a piece of text, turning embedded "\n" into soft line
+ * breaks (<a:br/>) so multi-line text renders correctly instead of overlapping.
+ * The break carries the same run properties so line height matches the font.
+ */
+function textRunsXml(text, rPr) {
+  const lines = String(text == null ? '' : text).split('\n');
+  let xml = '';
+  lines.forEach((line, i) => {
+    if (i > 0) xml += `<a:br>${rPr}</a:br>`;
+    xml += `<a:r>${rPr}<a:t>${escXml(line)}</a:t></a:r>`;
+  });
+  return xml;
+}
+
 function generateParagraphs(el) {
   // Simple text: string or array of strings
   if (typeof el.text === 'string') {
     const pPr = paraPropsXml(el);
     const rPr = runPropsXml(el);
-    return `<a:p>${pPr}<a:r>${rPr}<a:t>${escXml(el.text)}</a:t></a:r></a:p>`;
+    return `<a:p>${pPr}${textRunsXml(el.text, rPr)}</a:p>`;
   }
 
   // Array of paragraphs with runs
@@ -305,19 +324,19 @@ function generateParagraphs(el) {
       if (typeof para === 'string') {
         const pPr = paraPropsXml(el);
         const rPr = runPropsXml(el);
-        xml += `<a:p>${pPr}<a:r>${rPr}<a:t>${escXml(para)}</a:t></a:r></a:p>`;
+        xml += `<a:p>${pPr}${textRunsXml(para, rPr)}</a:p>`;
       } else if (para.runs) {
         const pPr = paraPropsXml(para);
         let runsXml = '';
         for (const run of para.runs) {
           const rPr = runPropsXml({ ...el, ...run });
-          runsXml += `<a:r>${rPr}<a:t>${escXml(run.text)}</a:t></a:r>`;
+          runsXml += textRunsXml(run.text, rPr);
         }
         xml += `<a:p>${pPr}${runsXml}</a:p>`;
       } else {
         const pPr = paraPropsXml(para);
         const rPr = runPropsXml({ ...el, ...para });
-        xml += `<a:p>${pPr}<a:r>${rPr}<a:t>${escXml(para.text)}</a:t></a:r></a:p>`;
+        xml += `<a:p>${pPr}${textRunsXml(para.text, rPr)}</a:p>`;
       }
     }
     return xml;

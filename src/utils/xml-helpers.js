@@ -76,6 +76,21 @@ function lineXml(line) {
 }
 
 /**
+ * Generate a preset-geometry adjust-value list (<a:avLst>).
+ * @param {object} adjust - { adj1: 12000, adj: 50000, ... } raw guide values
+ */
+function avLstXml(adjust) {
+  if (!adjust || typeof adjust !== 'object') return '<a:avLst/>';
+  const keys = Object.keys(adjust);
+  if (keys.length === 0) return '<a:avLst/>';
+  let gds = '';
+  for (const name of keys) {
+    gds += `<a:gd name="${name}" fmla="val ${Math.round(adjust[name])}"/>`;
+  }
+  return `<a:avLst>${gds}</a:avLst>`;
+}
+
+/**
  * Generate position/size transform XML
  */
 function xfrmXml(pos, rotation) {
@@ -142,5 +157,5 @@ function paraPropsXml(para = {}) {
 module.exports = {
   escXml, XML_DECL,
   colorXml, solidFillXml, gradientFillXml, fillXml,
-  lineXml, xfrmXml, runPropsXml, paraPropsXml,
+  lineXml, xfrmXml, avLstXml, runPropsXml, paraPropsXml,
 };

@@ -279,7 +279,7 @@ function generateGroup(el, rIdMap, getNextSpId) {
     <p:nvPr/>
   </p:nvGrpSpPr>
   <p:grpSpPr>
-    <a:xfrm>
+    <a:xfrm${el.rotation ? ` rot="${Math.round(el.rotation * 60000)}"` : ''}>
       <a:off x="${inchToEmu(pos.x)}" y="${inchToEmu(pos.y)}"/>
       <a:ext cx="${inchToEmu(pos.w)}" cy="${inchToEmu(pos.h)}"/>
       <a:chOff x="${inchToEmu(pos.x)}" y="${inchToEmu(pos.y)}"/>

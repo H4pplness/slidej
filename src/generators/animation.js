@@ -317,26 +317,34 @@ function generateScaleAnimation(anim, preset, dur, getNextId) {
   const isExit = preset.presetClass === 'exit';
   const scale = anim.scale || 110;
 
-  let fromX, fromY, toX, toY;
-  if (isEntrance) {
-    fromX = fromY = '0%'; toX = toY = '100%';
-  } else if (isExit) {
-    fromX = fromY = '100%'; toX = toY = '0%';
-  } else {
-    // emphasis: pulse effect
-    fromX = fromY = '100%'; toX = toY = `${scale}%`;
-  }
-
   let xml = '';
   if (isEntrance) xml += generateSetVisibility(spId, 0, getNextId);
 
-  xml += `<p:animScale>
+  // animScale x/y units: 100000 = 100%
+  if (isEntrance || isExit) {
+    // Entrance: grow 0% -> 100%.  Exit: shrink 100% -> 0%.
+    const from = isEntrance ? 0 : 100000;
+    const to = isEntrance ? 100000 : 0;
+    xml += `<p:animScale>
   <p:cBhvr>
     <p:cTn id="${getNextId()}" dur="${dur}" fill="hold"/>
     <p:tgtEl><p:spTgt spid="${spId}"/></p:tgtEl>
   </p:cBhvr>
-  <p:by x="${parseInt(toX) * 1000}" y="${parseInt(toY) * 1000}"/>
+  <p:from x="${from}" y="${from}"/>
+  <p:to x="${to}" y="${to}"/>
 </p:animScale>`;
+  } else {
+    // Emphasis (pulse / grow-shrink): 100% -> scale% -> 100% via autoReverse
+    const to = Math.round(scale * 1000);
+    xml += `<p:animScale>
+  <p:cBhvr>
+    <p:cTn id="${getNextId()}" dur="${dur}" autoRev="1" fill="hold"/>
+    <p:tgtEl><p:spTgt spid="${spId}"/></p:tgtEl>
+  </p:cBhvr>
+  <p:from x="100000" y="100000"/>
+  <p:to x="${to}" y="${to}"/>
+</p:animScale>`;
+  }
 
   return xml;
 }
@@ -352,6 +360,7 @@ function generateRotateAnimation(anim, dur, getNextId) {
   <p:cBhvr>
     <p:cTn id="${getNextId()}" dur="${dur}" fill="hold"/>
     <p:tgtEl><p:spTgt spid="${spId}"/></p:tgtEl>
+    <p:attrNameLst><p:attrName>r</p:attrName></p:attrNameLst>
   </p:cBhvr>
 </p:animRot>`;
 }
@@ -396,8 +405,9 @@ function generateFloatAnimation(anim, preset, dur, getNextId) {
  * @param {Array} frames - [{ tm, x, y }] where x/y are scale in 1/1000 percent
  */
 function generateScaleKeyframes(spId, dur, getNextId, frames) {
-  const tavX = frames.map(f => `<p:tav tm="${f.tm}"><p:val><p:fltVal val="${f.x / 1000}"/></p:val></p:tav>`).join('');
-  const tavY = frames.map(f => `<p:tav tm="${f.tm}"><p:val><p:fltVal val="${f.y / 1000}"/></p:val></p:tav>`).join('');
+  // frames x/y are in 1/1000 percent; ppt_w/ppt_h take a scale factor where 1.0 = 100%
+  const tavX = frames.map(f => `<p:tav tm="${f.tm}"><p:val><p:fltVal val="${f.x / 100000}"/></p:val></p:tav>`).join('');
+  const tavY = frames.map(f => `<p:tav tm="${f.tm}"><p:val><p:fltVal val="${f.y / 100000}"/></p:val></p:tav>`).join('');
   return `<p:anim calcmode="lin" valueType="num">
   <p:cBhvr additive="base">
     <p:cTn id="${getNextId()}" dur="${dur}" fill="hold"/>

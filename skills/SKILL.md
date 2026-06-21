@@ -3,133 +3,49 @@ name: slidej
 description: "Use this skill whenever the user wants to create PowerPoint presentations with animations, transitions, and precise element control from JSON — or reverse-engineer an existing .pptx into structured JSON. SlideJ is a CLI that generates .pptx from JSON and parses .pptx back to JSON, enabling a full round-trip workflow. Trigger when: user wants animated slides, mentions 'slidej', needs to convert a .pptx to JSON for reading or editing, wants element-level animation control (fadeIn, flyIn, zoom, spin, wipe, etc.), or needs a programmatic slide generation pipeline. Also trigger when the user uploads a .pptx and wants to understand its structure, modify it, or recreate it with changes."
 ---
 
-# SlideJ — CLI Usage Guide
+# SlideJ — Agent Guide
 
-## Commands
-
-### Generate PPTX from JSON
+## Quick Start
 
 ```bash
-slidej generate <input.json> -o <output.pptx>
-slidej gen <input.json> -o <output.pptx>        # short alias
+# JSON -> PPTX
+slidej generate input.json -o output.pptx
+slidej gen input.json -o output.pptx          # alias
+
+# PPTX -> JSON
+slidej parse input.pptx -o output.json
+slidej parse input.pptx                       # stdout
+slidej parse input.pptx --no-images -o out.json
+
+# Templates
+slidej template list                          # list all
+slidej template info <name>                   # show style guide
+slidej template use <name> -o deck.json       # export for editing
+slidej template save input.json <name> -d "Description" -t "tag1,tag2"
+slidej template remove <name>
+
+# Helpers
+slidej schema                                 # print JSON schema
+slidej example -o example.json                # demo deck
 ```
 
-### Parse PPTX to JSON
-
-```bash
-slidej parse <input.pptx> -o <output.json>       # save to file
-slidej parse <input.pptx>                         # print to stdout
-slidej parse <input.pptx> --no-images -o out.json # skip base64 image data
-```
-
-### Template management
-
-```bash
-slidej template list                           # list all templates
-slidej template info <name>                    # show template details
-slidej template use <name> -o <output.json>    # export template as JSON
-slidej template save <input.json> <name>       # save JSON as template
-slidej template save <input.json> <name> -d "Description" -t "tag1,tag2"
-slidej template remove <name>                  # remove a custom template
-```
-
-Short aliases: `slidej tpl ls`, `slidej tpl use`, `slidej tpl rm`.
-
-### Generate example JSON
-
-```bash
-slidej example -o <output.json>
-```
-
-### Print schema reference
-
-```bash
-slidej schema
-```
-
----
-
-## Workflows
-
-### Create from template (recommended)
-
-```bash
-# Step 1: Browse templates
-slidej template list
-
-# Step 2: See what's inside
-slidej template info pitch-deck
-
-# Step 3: Export to JSON
-slidej template use pitch-deck -o deck.json
-
-# Step 4: Edit deck.json (change text, colors, add/remove slides)
-
-# Step 5: Generate PPTX
-slidej generate deck.json -o presentation.pptx
-```
-
-### Available built-in templates
-
-Each template is a **style guide** with example slides. The included slides are reference only — add, remove, or rearrange freely. Run `slidej template info <name>` to see the full style guide (palette, layout, components, animations, customization tips).
+### Templates
 
 | Template | Style | Best for |
 |----------|-------|----------|
-| `title-slide` | Dark hero, centered | Title screens, section dividers, closing CTAs |
-| `pitch-deck` | Professional dark-to-light | Pitches, proposals, product launches |
-| `report` | Clean corporate, tables | Quarterly reports, reviews, dashboards |
-| `minimal` | Whitespace, typography | Academic talks, briefings, text-heavy content |
-| `dark-modern` | Dark UI, gradient accents | Tech products, SaaS demos, developer tools |
-| `sunset-wave` | Warm gradients, organic shapes | Creative portfolios, storytelling, brand narratives |
-| `candy-pop` | Bold pop-art on white | Events, campaigns, youth-oriented content |
-| `ocean-aurora` | Deep cool-tone, glow | Tech showcases, science, premium branding |
-| `neon-garden` | Neon-on-black, high contrast | Creative agencies, art portfolios, entertainment |
-
-### Create from scratch
-
-Write a JSON file following the schema below, then generate:
-
-```bash
-slidej generate slides.json -o presentation.pptx
-```
-
-### Modify an existing presentation
-
-```bash
-# Step 1: Parse to JSON
-slidej parse original.pptx --no-images -o deck.json
-
-# Step 2: Edit deck.json (add slides, change text, add animations)
-
-# Step 3: Regenerate
-slidej generate deck.json -o updated.pptx
-```
-
-When editing parsed JSON for re-generation, you can remove `id`, `name`, and `srcBase64` fields — the generator assigns new IDs automatically.
-
-### Save and reuse templates
-
-```bash
-# Save a finished deck as a reusable template
-slidej template save deck.json my-company -d "Company branded deck" -t "company,branded"
-
-# Use it later
-slidej template use my-company -o new-deck.json
-```
-
-Custom templates are stored in `~/.slidej/templates/` and override built-in templates with the same name.
-
-### Inspect a presentation
-
-```bash
-slidej parse uploaded.pptx --no-images
-```
-
-Prints structured JSON to stdout for direct reading.
+| `title-slide` | Dark hero, centered | Title screens, section dividers |
+| `pitch-deck` | Professional dark-to-light | Pitches, proposals |
+| `report` | Clean corporate, tables | Reports, dashboards |
+| `minimal` | Whitespace, typography | Academic, text-heavy |
+| `dark-modern` | Dark UI, gradient accents | Tech, SaaS demos |
+| `sunset-wave` | Warm gradients, organic | Creative, storytelling |
+| `candy-pop` | Bold pop-art on white | Events, campaigns |
+| `ocean-aurora` | Deep cool-tone, glow | Tech showcases, premium |
+| `neon-garden` | Neon-on-black | Creative agencies, entertainment |
 
 ---
 
-## JSON Schema
+## JSON Structure
 
 ### Root
 
@@ -137,106 +53,105 @@ Prints structured JSON to stdout for direct reading.
 {
   "width": 13.333,
   "height": 7.5,
-  "meta": { "title": "Deck Title", "author": "Author" },
+  "meta": { "title": "Title", "author": "Author" },
   "theme": {
     "colors": { "accent1": "4472C4", "accent2": "ED7D31" },
     "majorFont": "Calibri Light",
     "minorFont": "Calibri"
   },
-  "slides": []
+  "slides": [...]
 }
 ```
-
-All positions and sizes are in **inches**. Default slide: 13.333 × 7.5 (widescreen 16:9).
 
 ### Slide
 
 ```json
 {
-  "background": "1a1a2e",
+  "background": "1A1A2E",
   "transition": "fade",
-  "elements": []
+  "elements": [...]
 }
 ```
 
-**Background** — hex string or gradient:
+Background: hex string `"1A1A2E"` or gradient object:
 
 ```json
-{ "type": "gradient", "stops": [{ "position": 0, "color": "000000" }, { "position": 100, "color": "333366" }], "angle": 90 }
+{
+  "type": "gradient",
+  "stops": [
+    { "position": 0, "color": "0B0B1F" },
+    { "position": 100, "color": "162447" }
+  ],
+  "angle": 135
+}
 ```
 
-**Transition** — string shorthand or object:
-
-Shorthand values: `fade`, `push`, `wipe`, `split`, `cover`, `cut`, `dissolve`, `random`.
-
-```json
-{ "type": "fade", "speed": "med", "advanceAfter": 3000 }
-```
+Transition: `"fade"` | `"push"` | `"wipe"` | `"split"` | `"cover"` | `"cut"` | `"dissolve"` | `"random"`, or object `{ "type": "fade", "speed": "med", "advanceAfter": 3000 }`.
 
 ---
 
-## Element Types
+## Elements
+
+All elements **must** have `position: { x, y, w, h }` in **inches**.
+
+Slide size: **13.333" wide x 7.5" tall**. Safe margin: 0.5" on each side.
+
+### Rules
+
+- Colors are **bare hex without `#`**: use `"FF0000"` not `"#FF0000"`.
+- Font sizes are in **points**. Text is **not** auto-sized — reduce `fontSize` or enlarge box if text overflows.
+- Image `src` paths are resolved **relative to the JSON file's directory**.
+- Use `"\n"` inside any text string for line breaks.
 
 ### Text
-
-Simple:
 
 ```json
 {
   "type": "text",
   "text": "Hello World",
   "position": { "x": 1, "y": 1, "w": 10, "h": 1.5 },
-  "fontSize": 36, "bold": true, "color": "FFFFFF",
-  "fontFamily": "Arial", "align": "center", "vertAlign": "middle"
+  "fontSize": 36,
+  "bold": true,
+  "color": "FFFFFF",
+  "fontFamily": "Calibri Light",
+  "align": "center",
+  "vertAlign": "middle"
 }
 ```
 
-Multi-paragraph:
+Multi-paragraph (each item is a separate paragraph):
 
 ```json
-{
-  "type": "text",
-  "text": [
-    { "text": "Large heading", "fontSize": 28, "bold": true, "color": "FFFFFF" },
-    { "text": "Smaller subtitle", "fontSize": 16, "color": "AAAAAA" }
-  ],
-  "position": { "x": 1, "y": 1, "w": 10, "h": 2 }
-}
+"text": [
+  { "text": "Heading", "fontSize": 28, "bold": true, "color": "FFFFFF" },
+  { "text": "Subtitle", "fontSize": 16, "color": "AAAAAA" }
+]
 ```
 
 Mixed runs in one paragraph:
 
 ```json
-{
-  "type": "text",
-  "text": [
-    {
-      "align": "center",
-      "runs": [
-        { "text": "Bold part ", "bold": true, "color": "FF0000" },
-        { "text": "and normal part", "color": "333333" }
-      ]
-    }
-  ],
-  "position": { "x": 1, "y": 1, "w": 10, "h": 1 }
-}
+"text": [
+  {
+    "align": "center",
+    "runs": [
+      { "text": "Bold part ", "bold": true, "color": "FF0000" },
+      { "text": "normal part", "color": "333333" }
+    ]
+  }
+]
 ```
 
 Bullet list:
 
 ```json
-{
-  "type": "text",
-  "text": [
-    { "text": "First point", "bullet": true },
-    { "text": "Second point", "bullet": "→" }
-  ],
-  "position": { "x": 1, "y": 2, "w": 10, "h": 3 },
-  "fontSize": 18, "color": "333333"
-}
+"text": [
+  { "text": "First point", "bullet": true },
+  { "text": "Second point", "bullet": true }
+]
 ```
 
-Optional properties: `fill`, `line`, `shadow`, `rotation`, `margin`, `lineSpacing`, `italic`, `underline`, `strike`.
+Optional: `fill`, `line`, `shadow`, `rotation`, `margin`, `lineSpacing`, `italic`, `underline`, `strike`.
 
 ### Shape
 
@@ -246,35 +161,43 @@ Optional properties: `fill`, `line`, `shadow`, `rotation`, `margin`, `lineSpacin
   "shapeType": "roundRect",
   "position": { "x": 1, "y": 1, "w": 4, "h": 3 },
   "fill": "4472C4",
-  "text": "Label inside",
-  "fontSize": 18, "color": "FFFFFF",
-  "align": "center", "vertAlign": "middle"
+  "line": { "color": "333333", "width": 2 },
+  "text": "Label",
+  "fontSize": 18,
+  "color": "FFFFFF",
+  "align": "center",
+  "vertAlign": "middle"
 }
 ```
 
-Available `shapeType` values: `rect`, `roundRect`, `ellipse`, `triangle`, `diamond`, `pentagon`, `hexagon`, `octagon`, `star5`, `star6`, `rightArrow`, `leftArrow`, `upArrow`, `downArrow`, `line`, `cloud`, `heart`, `lightningBolt`, `callout1`, `callout2`.
+Shape types: `rect`, `roundRect`, `ellipse`, `triangle`, `diamond`, `pentagon`, `hexagon`, `octagon`, `star5`, `star6`, `rightArrow`, `leftArrow`, `upArrow`, `downArrow`, `line`, `cloud`, `heart`, `lightningBolt`, `callout1`, `callout2`, `chevron`, `donut`, `blockArc`, `arc`, `pie`, `plaque`, `can`, `parallelogram`, `trapezoid`.
 
-Gradient fill:
+Fill can be gradient:
 
 ```json
-{ "fill": { "type": "gradient", "stops": [{ "position": 0, "color": "4472C4" }, { "position": 100, "color": "2E5CA8" }], "angle": 135 } }
+"fill": {
+  "type": "gradient",
+  "stops": [
+    { "position": 0, "color": "4472C4" },
+    { "position": 100, "color": "2E5CA8" }
+  ],
+  "angle": 135
+}
 ```
 
-Optional properties: `line`, `shadow`, `rotation`. Shapes can contain `text` with all text styling properties.
+Optional: `noFill` (outline only), `adjust` (geometry tweaks), `shadow`, `rotation`.
 
 ### Image
 
 ```json
 {
   "type": "image",
-  "src": "./images/photo.png",
+  "src": "assets/photo.png",
   "position": { "x": 2, "y": 2, "w": 5, "h": 3 }
 }
 ```
 
-`src` accepts: relative path (resolved from JSON file location), absolute path, or base64 data URI.
-
-Optional properties: `hyperlink`, `crop`, `line`, `rotation`.
+Optional: `hyperlink`, `crop: { left, top, right, bottom }`, `line`, `rotation`.
 
 ### Table
 
@@ -282,183 +205,355 @@ Optional properties: `hyperlink`, `crop`, `line`, `rotation`.
 {
   "type": "table",
   "position": { "x": 0.5, "y": 2, "w": 12, "h": 4 },
-  "headerRow": true, "fontSize": 14,
+  "headerRow": true,
+  "fontSize": 14,
   "rows": [
     ["Column A", "Column B", "Column C"],
-    ["Row 1", "100", "OK"],
-    ["Row 2", "200", "Warning"]
+    ["Data 1", "100", "OK"]
   ]
 }
 ```
 
-Styled cells:
+Styled cells: `{ "text": "Header", "bold": true, "fill": "4472C4", "color": "FFFFFF", "align": "center" }`.
 
-```json
-{ "text": "Header", "bold": true, "fill": "4472C4", "color": "FFFFFF", "align": "center" }
-```
+Tables do **NOT** support animations.
 
 ### Group
+
+Groups wrap multiple elements into a single unit. Children use **absolute coordinates** (not relative to the group).
 
 ```json
 {
   "type": "group",
-  "position": { "x": 1, "y": 1, "w": 5, "h": 5 },
+  "position": { "x": 0, "y": 0, "w": 8, "h": 8 },
+  "rotation": 0,
   "children": [
-    { "type": "shape", "shapeType": "rect", "position": { "x": 1, "y": 1, "w": 2, "h": 2 }, "fill": "FF0000" },
-    { "type": "text", "text": "Label", "position": { "x": 1, "y": 1, "w": 1, "h": 0.5 } }
+    { "type": "shape", "shapeType": "ellipse", "position": { "x": 0, "y": 0, "w": 8, "h": 8 }, "fill": "FAFAFA" },
+    { "type": "shape", "shapeType": "ellipse", "position": { "x": 3.8, "y": 0, "w": 0.4, "h": 0.4 }, "fill": "FF0000" }
+  ],
+  "animations": [
+    { "type": "fadeIn", "duration": 500, "trigger": "afterPrevious", "order": 0 },
+    { "type": "spin", "degrees": 90, "duration": 800, "trigger": "afterPrevious", "order": 1 }
   ]
 }
 ```
+
+Key points:
+- **`rotation`** on the group sets the **initial rotation** (degrees). This is a static base angle.
+- Animations on the group apply to the **entire unit** — all children move/fade/spin together.
+- Group `rotation` + `spin` animation **compose**: you can set different base `rotation` across slides and add the same `spin` to create a continuous rotation effect (e.g. 0, 72, 144... base + spin 72 each time).
+- Children inside a group cannot have their own animations — only the group itself animates.
 
 ---
 
 ## Animations
 
-Attach to any text, shape, or image element via the `animations` array:
+Add `"animations": [...]` to any text, shape, image, or group element.
 
 ```json
-{
-  "type": "text",
-  "text": "Animated element",
-  "position": { "x": 1, "y": 1, "w": 5, "h": 1 },
-  "animations": [
-    { "type": "fadeIn", "duration": 500, "trigger": "afterPrevious", "delay": 0 }
-  ]
-}
+"animations": [
+  { "type": "fadeIn", "duration": 500, "trigger": "afterPrevious", "delay": 0 }
+]
 ```
 
-### Animation types
+### Triggers (how animations are sequenced)
 
-| Type | Class | Notes |
-|------|-------|-------|
-| `appear` | Entrance | Instant visibility |
-| `fadeIn` | Entrance | Opacity transition |
-| `fadeOut` | Exit | |
-| `flyIn` | Entrance | Requires `direction` |
-| `flyOut` | Exit | Requires `direction` |
-| `wipeIn` | Entrance | Requires `direction` |
-| `wipeOut` | Exit | Requires `direction` |
-| `zoomIn` | Entrance | Scale from 0% to 100% |
-| `zoomOut` | Exit | |
-| `splitIn` | Entrance | Barn-door reveal |
-| `bounceIn` | Entrance | Scale overshoot |
-| `floatIn` / `floatOut` | Entrance / Exit | Fade + vertical drift |
-| `swivel` | Entrance | Fade + horizontal unfold |
-| `dissolveIn` / `dissolveOut` | Entrance / Exit | Dissolve |
-| `pulse` | Emphasis | Accepts `scale` (default 110) |
-| `spin` | Emphasis | Accepts `degrees` (default 360) |
-| `growShrink` | Emphasis | Accepts `scale` |
-| `colorChange` | Emphasis | Accepts `color` (target fill) |
-| `transparency` | Emphasis | Accepts `opacity` % |
-| `teeter` | Emphasis | Rocking rotation, accepts `degrees` |
-| `blink` | Emphasis | Quick hide/show |
-| `motionPath` | Motion | Accepts `points` (rel. inches) or `path:"line"` + `direction`/`distance` |
+| Trigger | Behavior |
+|---------|----------|
+| `onClick` | Plays on mouse click (default). Starts a new click group. |
+| `withPrevious` | Plays at the same time as the previous animation. |
+| `afterPrevious` | Plays after the previous animation finishes. |
 
-### High-level components
+The **first `afterPrevious`** animation on a slide **auto-plays on slide entry** — no click needed. This is the standard way to make things appear automatically.
 
-Convenience element types that expand into a group of shapes. Place in slide `elements`;
-accept `position` and `animations`. See SCHEMA.md for full fields.
+### All animation types
 
-| Type | Key fields |
-|------|-----------|
-| `progressBar` | `value`, `color`, `trackColor`, `showLabel` |
-| `progressRing` | `value`, `color`, `trackColor`, `thickness` |
-| `barChart` | `data[]`, `labels[]`, `colors[]`, `showValues`, `axis` |
-| `kpiCard` | `value`, `label`, `delta`, `accent`, `bg` |
-| `ratingStars` | `rating`, `max`, `color`, `emptyColor` |
-| `timeline` | `items[{label,sub}]`, `dotColor`, `lineColor` |
-| `processFlow` | `steps[]`, `colors[]`, `shape` |
+**Entrance (element appears):**
 
-### Triggers
+| Type | Required fields | Description |
+|------|----------------|-------------|
+| `appear` | — | Instant appearance |
+| `fadeIn` | — | Opacity 0 -> 100% |
+| `flyIn` | `direction` | Fly in from a direction |
+| `wipeIn` | `direction` | Wipe reveal from a direction |
+| `zoomIn` | — | Scale from 0% to 100% |
+| `splitIn` | — | Barn-door reveal |
+| `bounceIn` | — | Scale with overshoot |
+| `floatIn` | — | Fade + vertical drift up |
+| `swivel` | — | Fade + horizontal unfold |
+| `dissolveIn` | — | Dissolve effect |
 
-| Value | Behavior |
-|-------|----------|
-| `onClick` | Plays on mouse click (default) |
-| `withPrevious` | Plays simultaneously with previous animation |
-| `afterPrevious` | Plays after previous animation finishes |
+**Exit (element disappears):**
 
-### Direction values (for fly / wipe)
+| Type | Required fields | Description |
+|------|----------------|-------------|
+| `fadeOut` | — | Opacity 100% -> 0 |
+| `flyOut` | `direction` | Fly out to a direction |
+| `wipeOut` | `direction` | Wipe out to a direction |
+| `zoomOut` | — | Scale from 100% to 0% |
+| `floatOut` | — | Fade + drift away |
+| `dissolveOut` | — | Dissolve out |
 
-`top`, `right`, `bottom`, `left`, `topLeft`, `topRight`, `bottomLeft`, `bottomRight`
+**Emphasis (element is already visible):**
 
-### Staggered entrance pattern
+| Type | Required fields | Description |
+|------|----------------|-------------|
+| `pulse` | `scale` (default 110) | Pulse size briefly |
+| `spin` | `degrees` (default 360) | Rotate in place |
+| `growShrink` | `scale` | Scale up/down |
+| `colorChange` | `color` | Animate fill to new color |
+| `transparency` | `opacity` | Animate to opacity % |
+| `teeter` | `degrees` | Rock back and forth |
+| `blink` | — | Quick hide/show |
 
-Distribute animations across different elements using `afterPrevious` and `delay`:
+**Motion:**
 
-```
-Element 1: { "type": "fadeIn", "duration": 500, "trigger": "afterPrevious" }
-Element 2: { "type": "fadeIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }
-Element 3: { "type": "flyIn", "direction": "left", "duration": 600, "trigger": "afterPrevious", "delay": 200 }
-```
+| Type | Required fields | Description |
+|------|----------------|-------------|
+| `motionPath` | `points` array or `path`+`direction`+`distance` | Move along a path |
 
-Use `order` to control execution sequence when multiple animations share the same trigger.
+### Direction values (for flyIn/Out, wipeIn/Out)
+
+`top`, `bottom`, `left`, `right`, `topLeft`, `topRight`, `bottomLeft`, `bottomRight`
 
 ---
 
-## Coordinate Planning
+## Animation Patterns
 
-Slide dimensions: 13.333" wide × 7.5" tall. Safe margin: 0.5" on each side.
+### Pattern 1: Staggered entrance (elements appear one after another)
+
+Use `afterPrevious` with increasing `delay` on each element:
+
+```json
+// Element 1 — auto-plays on slide entry (first afterPrevious = auto-play)
+{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious" }
+
+// Element 2 — starts after element 1 finishes, plus 200ms pause
+{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }
+
+// Element 3 — starts after element 2 finishes, plus 200ms pause
+{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious", "delay": 200 }
+```
+
+### Pattern 2: Simultaneous entrance (multiple elements at once)
+
+Use `withPrevious` on elements that should appear together:
+
+```json
+// Element 1
+{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious" }
+
+// Element 2 — plays at the same time as Element 1
+{ "type": "fadeIn", "duration": 500, "trigger": "withPrevious" }
+```
+
+### Pattern 3: Auto-play sequence on slide entry
+
+All `afterPrevious` — the entire chain plays automatically when the slide appears:
+
+```json
+// Title fades in automatically
+{ "type": "fadeIn", "duration": 800, "trigger": "afterPrevious" }
+
+// Subtitle fades in after title, with a 300ms gap
+{ "type": "fadeIn", "duration": 600, "trigger": "afterPrevious", "delay": 300 }
+
+// Divider line wipes in after subtitle
+{ "type": "wipeIn", "direction": "right", "duration": 400, "trigger": "afterPrevious", "delay": 200 }
+
+// Content cards fly in one by one
+{ "type": "flyIn", "direction": "bottom", "duration": 600, "trigger": "afterPrevious", "delay": 200 }
+{ "type": "flyIn", "direction": "bottom", "duration": 600, "trigger": "afterPrevious", "delay": 200 }
+```
+
+### Pattern 4: Multiple animations on one element
+
+An element can have multiple animations that play in sequence. Use `order` to control sequence:
+
+```json
+"animations": [
+  { "type": "fadeIn", "duration": 300, "trigger": "afterPrevious", "order": 0 },
+  { "type": "spin", "degrees": 72, "duration": 900, "trigger": "afterPrevious", "order": 1 }
+]
+```
+
+### Pattern 5: Rotating wheel across slides
+
+Use a group with a base `rotation` that changes per slide + a `spin` animation:
+
+```json
+// Slide 2: rotation 0, spin +72
+{ "type": "group", "rotation": 0, "animations": [
+    { "type": "fadeIn", "duration": 300, "trigger": "afterPrevious", "order": 0 },
+    { "type": "spin", "degrees": 72, "duration": 900, "trigger": "afterPrevious", "order": 1 }
+]}
+
+// Slide 3: rotation 72, spin +72
+{ "type": "group", "rotation": 72, "animations": [
+    { "type": "fadeIn", "duration": 300, "trigger": "afterPrevious", "order": 0 },
+    { "type": "spin", "degrees": 72, "duration": 900, "trigger": "afterPrevious", "order": 1 }
+]}
+
+// Slide 4: rotation 144, spin +72
+{ "type": "group", "rotation": 144, "animations": [...same...] }
+```
+
+Each slide starts where the previous left off (base `rotation` = previous base + spin degrees).
+
+### Pattern 6: Click-to-reveal (interactive)
+
+Use `onClick` for elements that should appear only on click:
+
+```json
+// Visible immediately
+{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious" }
+
+// Appears on first click
+{ "type": "fadeIn", "duration": 500, "trigger": "onClick" }
+
+// Appears on second click
+{ "type": "flyIn", "direction": "left", "duration": 600, "trigger": "onClick" }
+```
+
+---
+
+## Layout Reference
+
+Slide: **13.333" x 7.5"**. Safe area: x=0.5 to x=12.833, y=0.5 to y=7.0.
 
 ```
-Y=0.5   Title area       (h ≈ 1.0–1.5)
-Y=1.8   Content start     (h ≈ 4.0)
-Y=6.0   Footer / source   (h ≈ 0.5)
+Y=0.4–0.5    Title area         (h ~ 1.0–1.5)
+Y=1.8–2.0    Content start      (h ~ 4.0)
+Y=6.0–6.5    Footer / source    (h ~ 0.5)
 ```
+
+### Common column layouts
 
 | Layout | Column 1 | Column 2 | Column 3 |
 |--------|----------|----------|----------|
-| 2-column | x=0.5, w=5.9 | x=6.8, w=5.9 | — |
-| 3-column | x=0.5, w=3.8 | x=4.7, w=3.8 | x=8.9, w=3.8 |
+| 2-col | x=0.5, w=5.9 | x=6.8, w=5.9 | — |
+| 3-col | x=0.5, w=3.8 | x=4.7, w=3.8 | x=8.9, w=3.8 |
+| 4-col | x=0.5, w=2.83 | x=3.67, w=2.83 | x=6.83, w=2.83 |
 
-Gap between columns: 0.4".
+Gap between columns: ~0.4".
+
+### Centering N items horizontally
+
+Formula: given `itemW`, `gap`, and `N` items:
+- totalW = N * itemW + (N-1) * gap
+- startX = (13.333 - totalW) / 2
+- Each item: x = startX + i * (itemW + gap)
+
+### Placing items in a circle
+
+For N items on a circle of radius R centered at (cx, cy), item size s:
+- angle_i = i * (360 / N) - 90 (start from top)
+- x = cx + R * cos(angle_i) - s/2
+- y = cy + R * sin(angle_i) - s/2
 
 ---
 
-## Important Notes
+## Components (high-level)
 
-1. Every element **must** have `position: { x, y, w, h }` in inches.
-2. Hex colors **do not** need the `#` prefix. Use `"FF0000"` not `"#FF0000"`.
-3. Tables do **not** support animations.
-4. Image paths are resolved relative to the JSON file's directory.
-5. Text is **not** auto-sized. Reduce `fontSize` or increase box dimensions if text overflows.
-6. `transition` belongs on the slide object. `animations` belong on individual elements.
-7. Parsed JSON can be fed directly back into `generate` for round-trip editing.
+These expand into primitive groups automatically. Use `position` and optional `animations`.
+
+### progressBar
+
+```json
+{ "type": "progressBar", "position": { "x": 1, "y": 1, "w": 5, "h": 0.5 },
+  "value": 72, "color": "4472C4", "trackColor": "E6E6E6", "showLabel": true }
+```
+
+### progressRing
+
+```json
+{ "type": "progressRing", "position": { "x": 1, "y": 1, "w": 2, "h": 2 },
+  "value": 65, "color": "70AD47", "trackColor": "E6E6E6", "thickness": 0.16, "showLabel": true }
+```
+
+### barChart
+
+```json
+{ "type": "barChart", "position": { "x": 1, "y": 3, "w": 6, "h": 3 },
+  "data": [40, 70, 55, 90], "labels": ["Q1", "Q2", "Q3", "Q4"],
+  "colors": ["4472C4", "5B9BD5", "70AD47", "ED7D31"], "showValues": true, "axis": true }
+```
+
+### kpiCard
+
+```json
+{ "type": "kpiCard", "position": { "x": 1, "y": 1, "w": 3, "h": 1.5 },
+  "value": "$1.2M", "label": "Revenue", "delta": "+12%", "accent": "5B9BD5" }
+```
+
+### ratingStars
+
+```json
+{ "type": "ratingStars", "position": { "x": 1, "y": 1, "w": 4, "h": 0.9 },
+  "rating": 4, "max": 5, "color": "FFC000", "emptyColor": "D9D9D9" }
+```
+
+### timeline
+
+```json
+{ "type": "timeline", "position": { "x": 1, "y": 1.5, "w": 11, "h": 2 },
+  "items": [{ "label": "2021", "sub": "Founded" }, { "label": "2022", "sub": "Seed" }],
+  "dotColor": "4472C4", "lineColor": "CCCCCC" }
+```
+
+### processFlow
+
+```json
+{ "type": "processFlow", "position": { "x": 1, "y": 5, "w": 6, "h": 0.8 },
+  "steps": ["Plan", "Build", "Test", "Ship"],
+  "colors": ["4472C4", "5B9BD5", "70AD47", "ED7D31"], "shape": "chevron" }
+```
 
 ---
 
-## Full Example
+## Complete Example: Title Slide + Content Slide
 
 ```json
 {
   "width": 13.333, "height": 7.5,
   "meta": { "title": "Demo", "author": "Agent" },
+  "theme": {
+    "colors": { "accent1": "4472C4", "accent2": "ED7D31" },
+    "majorFont": "Calibri Light", "minorFont": "Calibri"
+  },
   "slides": [
     {
-      "background": "0B1D3A",
+      "background": { "type": "gradient", "stops": [{ "position": 0, "color": "0B0B1F" }, { "position": 100, "color": "162447" }], "angle": 135 },
       "transition": "fade",
       "elements": [
         {
-          "type": "text", "text": "Welcome",
-          "position": { "x": 1, "y": 2.5, "w": 11, "h": 1.5 },
-          "fontSize": 52, "bold": true, "color": "FFFFFF", "align": "center",
+          "type": "text", "text": "Presentation Title",
+          "position": { "x": 0.8, "y": 2.5, "w": 11.7, "h": 1.2 },
+          "fontSize": 48, "bold": true, "color": "FFFFFF", "align": "center", "fontFamily": "Calibri Light",
           "animations": [{ "type": "fadeIn", "duration": 800, "trigger": "afterPrevious" }]
         },
         {
           "type": "text", "text": "Subtitle goes here",
-          "position": { "x": 3, "y": 4.2, "w": 7, "h": 0.8 },
-          "fontSize": 22, "color": "7EB8DA", "align": "center",
+          "position": { "x": 2, "y": 3.8, "w": 9.3, "h": 0.6 },
+          "fontSize": 20, "color": "8899BB", "align": "center", "fontFamily": "Calibri Light",
           "animations": [{ "type": "fadeIn", "duration": 600, "trigger": "afterPrevious", "delay": 300 }]
+        },
+        {
+          "type": "shape", "shapeType": "rect",
+          "position": { "x": 4.3, "y": 4.6, "w": 4.7, "h": 0.022 },
+          "fill": "4472C4",
+          "animations": [{ "type": "wipeIn", "direction": "right", "duration": 500, "trigger": "afterPrevious", "delay": 200 }]
         }
       ]
     },
     {
       "background": "FFFFFF",
-      "transition": "push",
+      "transition": "fade",
       "elements": [
         {
-          "type": "text", "text": "Features",
-          "position": { "x": 0.5, "y": 0.4, "w": 12, "h": 1 },
-          "fontSize": 36, "bold": true, "color": "1a1a2e", "align": "center",
+          "type": "text", "text": "Section Title",
+          "position": { "x": 0.5, "y": 0.4, "w": 12.3, "h": 1 },
+          "fontSize": 36, "bold": true, "color": "2D3436", "align": "center",
           "animations": [{ "type": "fadeIn", "duration": 500, "trigger": "afterPrevious" }]
         },
         {
@@ -470,7 +565,7 @@ Gap between columns: 0.4".
             { "text": "Description here", "fontSize": 14, "color": "CCDDFF" }
           ],
           "align": "center", "vertAlign": "middle",
-          "animations": [{ "type": "flyIn", "direction": "left", "duration": 600, "trigger": "onClick" }]
+          "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 600, "trigger": "afterPrevious", "delay": 200 }]
         },
         {
           "type": "shape", "shapeType": "roundRect",
@@ -484,18 +579,38 @@ Gap between columns: 0.4".
           "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 600, "trigger": "afterPrevious", "delay": 200 }]
         },
         {
-          "type": "table",
-          "position": { "x": 1, "y": 5, "w": 11, "h": 2 },
-          "headerRow": true, "fontSize": 13,
-          "rows": [
-            ["Feature", "Status"],
-            ["Animations", "13 types"],
-            ["Tables", "Styled cells"],
-            ["Round-trip", "Parse + Generate"]
-          ]
+          "type": "shape", "shapeType": "roundRect",
+          "position": { "x": 8.9, "y": 1.8, "w": 3.8, "h": 2.5 },
+          "fill": "70AD47",
+          "text": [
+            { "text": "Card 3", "fontSize": 20, "bold": true, "color": "FFFFFF" },
+            { "text": "Third point", "fontSize": 14, "color": "D4EFCC" }
+          ],
+          "align": "center", "vertAlign": "middle",
+          "animations": [{ "type": "flyIn", "direction": "bottom", "duration": 600, "trigger": "afterPrevious", "delay": 200 }]
         }
       ]
     }
   ]
 }
+```
+
+---
+
+## Workflow: Modify Existing PPTX
+
+```bash
+slidej parse original.pptx --no-images -o deck.json   # Step 1: parse
+# Edit deck.json (remove `id`, `name`, `srcBase64` fields if present)
+slidej generate deck.json -o updated.pptx              # Step 2: regenerate
+```
+
+## Workflow: Create from Template
+
+```bash
+slidej template list                                   # browse
+slidej template info pitch-deck                        # see style guide
+slidej template use pitch-deck -o deck.json            # export
+# Edit deck.json
+slidej generate deck.json -o presentation.pptx         # generate
 ```

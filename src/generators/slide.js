@@ -343,7 +343,8 @@ function generateParagraphs(el) {
         }
         xml += `<a:p>${pPr}${runsXml}</a:p>`;
       } else {
-        const pPr = paraPropsXml(para);
+        // Paragraph objects inherit the element's alignment unless they set their own.
+        const pPr = paraPropsXml({ align: el.align, ...para });
         const rPr = runPropsXml({ ...el, ...para });
         xml += `<a:p>${pPr}${textRunsXml(para.text, rPr)}</a:p>`;
       }

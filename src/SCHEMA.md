@@ -326,7 +326,8 @@ An element's own fields (`fontSize`, `color`, `align`, …) override its style.
   Components without a height get a default (`progressBar` 0.4", `kpiCard` 1.4", …).
 - A box with `animations` becomes one group and animates as a unit; animations
   on its descendants are then ignored. Animate children individually by leaving
-  the box itself un-animated.
+  the box itself un-animated, or give the box an animation with `by: "item"` to
+  play its direct children one after another.
 - Fonts are looked up in the system font folders (plus `SLIDEJ_FONT_DIRS` and root
   `fonts`). If a font is missing, text is measured with an estimate and
   `generate` warns.
@@ -336,7 +337,8 @@ An element's own fields (`fontSize`, `color`, `align`, …) override its style.
 
 Components are convenience element types that expand into a `group` of primitive
 shapes/text. Put them directly in a slide's `elements`. They accept `position`
-(inches) and optional `animations` (applied to the whole component as one unit).
+(inches) and optional `animations` (applied to the whole component as one unit,
+or item by item with `by: "item"`, see Animations).
 
 ### progressBar
 ```json
@@ -444,6 +446,10 @@ shapes/text. Put them directly in a slide's `elements`. They accept `position`
       "trigger": "onClick",         // onClick | withPrevious | afterPrevious
       "order": 0,                   // execution order (lower = first)
 
+      // Play the parts one after another (see below):
+      "by": "item",                 // item | paragraph | word | letter
+      "stagger": 150,               // ms between parts
+
       // For fly animations:
       "direction": "left",          // top|right|bottom|left|topLeft|topRight|bottomLeft|bottomRight
 
@@ -504,3 +510,35 @@ shapes/text. Put them directly in a slide's `elements`. They accept `position`
 | `onClick` | Plays on next mouse click (default) |
 | `withPrevious` | Plays simultaneously with previous animation |
 | `afterPrevious` | Plays after previous animation finishes |
+
+**Playing parts one after another (`by`, `stagger`):**
+
+| `by` | Works on | Effect |
+|------|----------|--------|
+| `item` | components, `group`, `box` | Each item in turn: bars, steps, stars, timeline points, KPI value/label/delta, a group's or box's children |
+| `paragraph` | `text`, `shape` with text | Each paragraph (a string's `"\n"` lines count as paragraphs) |
+| `word` | `text`, `shape` with text | Word by word |
+| `letter` | `text`, `shape` with text | Letter by letter |
+
+- `stagger` (ms) is the gap between the starts of consecutive parts. With `item` /
+  `paragraph`, the first part keeps the animation's `trigger` and `delay` and the
+  others play with it, `stagger` ms apart. Without `stagger`, each part repeats
+  the trigger (`onClick`: one click per part; `afterPrevious`: one after another).
+- With `word` / `letter` the default gap is 10% of `duration`; `stagger` can be
+  at most `duration`.
+- `by: "item"` places the parts as separate shapes instead of one group (that is
+  how PowerPoint animates them). Base parts (track, axis, card background,
+  timeline line, box background) appear with the first item. Other animations
+  on the same element play on all parts together.
+- A following `afterPrevious` animation waits for the last part to finish.
+
+```json
+{ "type": "barChart", "data": [12, 19, 27], "position": { "x": 1, "y": 1.5, "w": 6, "h": 4 },
+  "animations": [{ "type": "wipeIn", "direction": "up", "by": "item", "stagger": 250, "trigger": "afterPrevious" }] }
+
+{ "type": "text", "text": "Point one\nPoint two\nPoint three", "bullet": true, "position": { "x": 8, "y": 1.5, "w": 4.5, "h": 2 },
+  "animations": [{ "type": "floatIn", "by": "paragraph", "stagger": 400, "trigger": "afterPrevious" }] }
+
+{ "type": "text", "text": "Results beat the plan", "position": { "x": 1, "y": 6, "w": 8, "h": 0.8 },
+  "animations": [{ "type": "fadeIn", "by": "letter", "stagger": 40, "duration": 300 }] }
+```

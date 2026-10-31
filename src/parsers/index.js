@@ -187,6 +187,8 @@ function parseSlide(slideXml, slideRels) {
           delay: anim.delay,
           trigger: anim.trigger,
           direction: anim.direction,
+          by: anim.by,
+          stagger: anim.stagger,
           order: anim.order,
         });
       }
@@ -414,7 +416,27 @@ function parseAnimations(timing) {
     console.warn('Warning: Could not fully parse animations:', e.message);
   }
 
-  return animations;
+  return mergeParagraphBuilds(animations);
+}
+
+// PowerPoint writes a paragraph build as one effect per paragraph. Fold runs
+// of the same effect on consecutive paragraphs back into one by "paragraph"
+// animation; a withPrevious second paragraph gives the stagger.
+function mergeParagraphBuilds(list) {
+  const out = [];
+  for (const a of list) {
+    const prev = out[out.length - 1];
+    if (a.paragraph != null && prev && prev.by === 'paragraph' && prev.targetSpId === a.targetSpId &&
+        prev.type === a.type && a.paragraph === prev._last + 1) {
+      if (prev._last === prev._first && a.trigger === 'withPrevious') prev.stagger = a.delay - prev.delay;
+      prev._last = a.paragraph;
+      continue;
+    }
+    if (a.paragraph != null) Object.assign(a, { by: 'paragraph', _first: a.paragraph, _last: a.paragraph });
+    out.push(a);
+  }
+  for (const a of out) { delete a.paragraph; delete a._first; delete a._last; }
+  return out;
 }
 
 function findEffectNodes(node, results = []) {
@@ -461,14 +483,19 @@ function parseEffectNode(node, order) {
     if (d && d !== 'indefinite') delay = parseInt(d) || 0;
   }
 
-  // Traverse children to find target and duration
+  // Traverse children to find target and duration. The longest behavior is
+  // the effect's duration (the visibility <p:set> lasts 1 ms).
+  let paragraph = null;
+  let longest = 0;
   const childTnLst = cTn['p:childTnLst'];
   if (childTnLst) {
-    traverseForTarget(childTnLst, (spid, dur) => {
+    traverseForTarget(childTnLst, (spid, dur, para) => {
       if (spid) targetSpId = parseInt(spid);
-      if (dur && dur !== 'indefinite') duration = parseInt(dur);
+      if (para != null) paragraph = parseInt(para);
+      if (dur && dur !== 'indefinite') longest = Math.max(longest, parseInt(dur) || 0);
     });
   }
+  if (longest > 1) duration = longest;
 
   const trigger = nodeType === 'withEffect' ? 'withPrevious'
     : nodeType === 'afterEffect' ? 'afterPrevious' : 'onClick';
@@ -481,6 +508,16 @@ function parseEffectNode(node, order) {
     trigger,
     order,
   };
+
+  // Text builds: one effect per paragraph, or iterating over words / letters
+  if (paragraph != null) result.paragraph = paragraph;
+  const iterate = cTn['p:iterate'];
+  const by = { wd: 'word', lt: 'letter' }[iterate?.['@_type']];
+  if (by) {
+    result.by = by;
+    const pct = iterate['p:tmPct']?.['@_val'];
+    if (pct != null) result.stagger = Math.round(duration * parseInt(pct) / 100000);
+  }
 
   // Direction for fly animations
   if ((typeName === 'flyIn' || typeName === 'flyOut') && presetSubtype !== '0') {
@@ -497,9 +534,11 @@ function traverseForTarget(node, callback) {
   for (const key of behaviorKeys) {
     for (const behavior of toArray(node[key])) {
       const cBhvr = behavior['p:cBhvr'];
-      const spid = cBhvr?.['p:tgtEl']?.['p:spTgt']?.['@_spid'];
+      const spTgt = cBhvr?.['p:tgtEl']?.['p:spTgt'];
+      const spid = spTgt?.['@_spid'];
+      const para = spTgt?.['p:txEl']?.['p:pRg']?.['@_st'];
       const dur = cBhvr?.['p:cTn']?.['@_dur'];
-      if (spid != null || dur != null) callback(spid, dur);
+      if (spid != null || dur != null) callback(spid, dur, para);
     }
   }
 }

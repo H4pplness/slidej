@@ -228,6 +228,13 @@ Add an `animations` array to any element:
 
 **Triggers:** `onClick` `withPrevious` `afterPrevious` — **Direction** (fly/wipe): `top` `right` `bottom` `left`
 
+Play parts one after another with `by` and `stagger` (ms between parts): `"by": "item"` for each bar, step or card of a component, group or box; `"paragraph"`, `"word"` or `"letter"` for text.
+
+```json
+{ "type": "wipeIn", "direction": "up", "by": "item", "stagger": 250, "trigger": "afterPrevious" }
+{ "type": "fadeIn", "by": "letter", "stagger": 40, "duration": 300 }
+```
+
 ## Library API
 
 ```javascript

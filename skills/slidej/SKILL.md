@@ -257,6 +257,30 @@ Add `"animations": [...]` to any text, shape, image, or group element.
 
 The **first `afterPrevious`** animation on a slide **auto-plays on slide entry** — no click needed. This is the standard way to make things appear automatically.
 
+### Parts one after another: `by` + `stagger`
+
+One animation can play the parts of an element in turn. Prefer this over writing one animation per element.
+
+| `by` | Works on | Plays |
+|------|----------|-------|
+| `item` | components, `group`, `box` | each bar / step / star / timeline point / KPI line / child in turn |
+| `paragraph` | `text`, `shape` with text | each paragraph (`"\n"` lines count) |
+| `word` / `letter` | `text`, `shape` with text | word by word / letter by letter |
+
+- `stagger`: ms between the starts of consecutive parts. The first part keeps `trigger` + `delay`; the rest play with it, `stagger` ms apart.
+- Without `stagger`, each part repeats the trigger (`onClick` → one click per part, `afterPrevious` → chain).
+- `word` / `letter` default to a 10%-of-duration gap; `stagger` is capped at `duration`.
+- `by: "item"` writes the parts as separate shapes (no group). Base parts (axis, track, card/box background) come with the first item.
+
+```json
+{ "type": "processFlow", "steps": ["Plan", "Build", "Ship"], "position": { "x": 0.6, "y": 1, "w": 12, "h": 1.2 },
+  "animations": [{ "type": "flyIn", "direction": "left", "by": "item", "stagger": 200, "trigger": "afterPrevious" }] }
+{ "type": "text", "text": "Point one\nPoint two", "bullet": true, "position": { "x": 0.6, "y": 3, "w": 6, "h": 1.2 },
+  "animations": [{ "type": "floatIn", "by": "paragraph", "stagger": 400, "trigger": "afterPrevious" }] }
+{ "type": "text", "text": "Big idea", "fontSize": 48, "position": { "x": 0.6, "y": 5, "w": 8, "h": 1 },
+  "animations": [{ "type": "fadeIn", "by": "letter", "stagger": 40, "duration": 300 }] }
+```
+
 ### All animation types
 
 **Entrance (element appears):**
@@ -452,7 +476,8 @@ Key rules:
 - Text props (`fontSize`, `color`, `fontFamily`, `bold`, `textAlign`, …) inherit from parent boxes.
 - Reuse styles with root `styles` + `class: "card muted"`; inline `style` wins.
 - Put `animations` on a box to animate it as one unit, or on its children to stagger them
-  (not both: a box's animation overrides its children's).
+  (not both: a box's animation overrides its children's). `by: "item"` on the box plays
+  its direct children one after another (e.g. a row of cards).
 - A plain `shape` in a flow needs `width`/`height` or `grow`; text, tables, images and
   components size themselves.
 - **Read the warnings `slidej generate` prints.** "overflows its container" means the content
@@ -498,7 +523,8 @@ For N items on a circle of radius R centered at (cx, cy), item size s:
 
 ## Components (high-level)
 
-These expand into primitive groups automatically. Use `position` and optional `animations`.
+These expand into primitive groups automatically. Use `position` and optional `animations`
+(`by: "item"` plays bars / steps / stars / points one after another).
 
 ### progressBar
 

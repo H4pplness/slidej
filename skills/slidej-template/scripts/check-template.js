@@ -11,6 +11,8 @@ const ANIMATIONS = ['appear', 'fadeIn', 'flyIn', 'wipeIn', 'zoomIn', 'splitIn', 
   'fadeOut', 'flyOut', 'wipeOut', 'zoomOut', 'floatOut', 'dissolveOut',
   'pulse', 'spin', 'growShrink', 'colorChange', 'transparency', 'teeter', 'blink', 'motionPath'];
 const TRIGGERS = ['onClick', 'withPrevious', 'afterPrevious'];
+const BY_ITEM = ['group', 'box'];
+const BY_TEXT = ['paragraph', 'word', 'letter'];
 const COMPONENTS = ['progressBar', 'progressRing', 'barChart', 'kpiCard', 'ratingStars', 'timeline', 'processFlow'];
 const ELEMENTS = ['text', 'shape', 'image', 'table', 'group', 'box', ...COMPONENTS];
 const CORE_ARCHETYPES = ['cover', 'section', 'content', 'cards', 'metrics', 'comparison', 'process', 'closing'];
@@ -123,6 +125,21 @@ function checkAnimations(where, el) {
     if (a.trigger && !TRIGGERS.includes(a.trigger)) err(w, `unknown trigger "${a.trigger}"`);
     if (['flyIn', 'flyOut', 'wipeIn', 'wipeOut'].includes(a.type) && !a.direction) warn(w, `${a.type} without "direction"`);
     if (a.duration != null && (a.duration < 100 || a.duration > 5000)) warn(w, `duration ${a.duration}ms looks off`);
+    if (a.by != null) {
+      const hasText = el.type === 'text' || (el.type === 'shape' && el.text);
+      if (a.by === 'item') {
+        if (!COMPONENTS.includes(el.type) && !BY_ITEM.includes(el.type)) err(w, `by "item" only works on components, groups and boxes, not ${el.type}`);
+      } else if (BY_TEXT.includes(a.by)) {
+        if (!hasText) err(w, `by "${a.by}" needs a text or a shape with text, not ${el.type}`);
+      } else {
+        err(w, `unknown by "${a.by}" (use item, paragraph, word or letter)`);
+      }
+    }
+    if (a.stagger != null && (typeof a.stagger !== 'number' || a.stagger < 0)) err(w, 'stagger must be a number of ms >= 0');
+    else if (a.stagger != null && !a.by) warn(w, 'stagger has no effect without "by"');
+    else if (a.stagger != null && ['word', 'letter'].includes(a.by) && a.stagger > (a.duration || 500)) {
+      warn(w, `stagger ${a.stagger}ms is capped at the duration for by "${a.by}"`);
+    }
   }
 }
 

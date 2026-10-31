@@ -12,7 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const { FontBook, measureParagraphs } = require('./fonts');
 const { resolveStyle, inheritText, edges } = require('./style');
-const { expandComponents, COMPONENT_TYPES } = require('../generators/components');
+const { expandComponents, sequenceUnits, COMPONENT_TYPES } = require('../generators/components');
 
 let yogaPromise = null;
 function loadYoga() {
@@ -328,6 +328,7 @@ function emit(ctx, lnode, offX, offY) {
     const deco = decoration(style, rect, el.name);
     if (deco) out.push(deco);
     checkOverflow(ctx, lnode);
+    if ((el.animations || []).some(a => a.by === 'item')) return asSequence(ctx, el, deco, lnode.children.map(c => emit(ctx, c, rect.x, rect.y)));
     for (const c of lnode.children) out.push(...emit(ctx, c, rect.x, rect.y));
     if (el.animations && el.animations.length) return [asGroup(ctx, el, rect, out)];
     return out;
@@ -432,6 +433,29 @@ function asGroup(ctx, el, rect, items) {
   };
   flatten(items);
   return { type: 'group', name: el.name, position: rect, animations: el.animations, children };
+}
+
+// A box animated by "item" plays its direct children one after another. Each
+// child (with everything inside it) is one item; the box's own background
+// appears with the first.
+function asSequence(ctx, el, deco, childOutputs) {
+  const name = el.name || 'box';
+  const units = childOutputs.map(list => {
+    const unit = [];
+    const flatten = items => {
+      for (const item of expandComponents(items)) {
+        if (item.animations && item.animations.length) {
+          ctx.warn(`box "${name}": animations on its children are ignored because the box itself is animated`);
+        }
+        if (item.type === 'group') { flatten(item.children || []); continue; }
+        unit.push({ ...item, animations: undefined });
+      }
+    };
+    flatten(list);
+    return unit;
+  }).filter(u => u.length);
+  if (deco) units.length ? units[0].unshift(deco) : units.push([deco]);
+  return sequenceUnits(units, el.animations, name, ctx.warn);
 }
 
 // ------------------------------------------------------------

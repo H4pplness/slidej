@@ -228,6 +228,13 @@ Thêm mảng `animations` vào bất kỳ element nào:
 
 **Trigger:** `onClick` `withPrevious` `afterPrevious` — **Direction** (fly/wipe): `top` `right` `bottom` `left`
 
+Cho các phần xuất hiện lần lượt bằng `by` và `stagger` (số ms giữa hai phần): `"by": "item"` cho từng cột, bước hay thẻ của component, group hoặc box; `"paragraph"`, `"word"` hoặc `"letter"` cho chữ.
+
+```json
+{ "type": "wipeIn", "direction": "up", "by": "item", "stagger": 250, "trigger": "afterPrevious" }
+{ "type": "fadeIn", "by": "letter", "stagger": 40, "duration": 300 }
+```
+
 ## Library API
 
 ```javascript

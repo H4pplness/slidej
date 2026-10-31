@@ -14,7 +14,7 @@ function generateSlide(slideData, rIdMap, slideSize, warn = () => {}, where = 's
   const getNextSpId = () => ++spIdCounter;
 
   // Expand high-level components (progressBar, barChart, ...) into primitive elements
-  const elements = expandComponents(slideData.elements || []);
+  const elements = expandComponents(slideData.elements || [], m => warn(`${where}: ${m}`));
 
   // Assign spId to each top-level element
   for (const el of elements) {
@@ -56,7 +56,7 @@ function generateSlide(slideData, rIdMap, slideSize, warn = () => {}, where = 's
 
   // Animation
   const animatedEls = elements.filter(el => el.animations && el.animations.length > 0);
-  const timingXml = generateTiming(animatedEls, size);
+  const timingXml = generateTiming(animatedEls, size, m => warn(`${where}: ${m}`));
 
   // Transition
   const transitionXml = generateTransition(slideData.transition, warn, where);
@@ -312,6 +312,13 @@ function textRunsXml(text, rPr) {
 }
 
 function generateParagraphs(el) {
+  // Text revealed paragraph by paragraph: each "\n" line becomes its own
+  // paragraph so the animation can target it.
+  if (typeof el.text === 'string' && el.text.includes('\n') &&
+      (el.animations || []).some(a => a.by === 'paragraph')) {
+    return generateParagraphs({ ...el, text: el.text.split('\n') });
+  }
+
   // Simple text: string or array of strings
   if (typeof el.text === 'string') {
     const pPr = paraPropsXml(el);

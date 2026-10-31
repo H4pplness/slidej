@@ -6,20 +6,33 @@
 // in absolute slide-inch coordinates. The component's own
 // `animations`, `name` and `position` are carried onto the group so
 // the whole component animates as one unit.
+//
+// Builders tag each child with `_item` (bar i, step i, star i, ...).
+// Untagged children are the base (track, axis, card background). An
+// animation with `by: "item"` skips the group and plays the items one
+// after another (see sequenceUnits).
 // ============================================================
 
+const { unitTiming } = require('./animation');
+
 const COMPONENT_TYPES = ['progressBar', 'progressRing', 'barChart', 'kpiCard', 'ratingStars', 'timeline', 'processFlow'];
+
+const playsByItem = el => (el.animations || []).some(a => a.by === 'item');
 
 /**
  * Expand any high-level components in an element list into primitive
  * elements. Non-component elements are passed through unchanged (same
- * reference, so internal fields set elsewhere survive).
+ * reference, so internal fields set elsewhere survive). A group animated
+ * with by "item" is split into its children the same way.
  */
-function expandComponents(elements) {
+function expandComponents(elements, warn = () => {}) {
   const out = [];
   for (const el of elements) {
     if (el && COMPONENT_TYPES.includes(el.type)) {
-      out.push(buildComponent(el));
+      out.push(...buildComponent(el, warn));
+    } else if (el && el.type === 'group' && playsByItem(el)) {
+      const children = (el.children || []).map(c => ({ ...c, animations: undefined }));
+      out.push(...sequenceUnits(children.map(c => [c]), el.animations, el.name || 'group', warn));
     } else {
       out.push(el);
     }
@@ -27,7 +40,7 @@ function expandComponents(elements) {
   return out;
 }
 
-function buildComponent(el) {
+function buildComponent(el, warn) {
   const pos = el.position || { x: 1, y: 1, w: 4, h: 1 };
   let children;
   switch (el.type) {
@@ -40,15 +53,58 @@ function buildComponent(el) {
     case 'processFlow':  children = buildProcessFlow(el, pos); break;
     default:             children = [];
   }
+  const name = el.name || el.type;
+  if (playsByItem(el) && children.length) {
+    // Base parts appear with the first item.
+    const units = [];
+    for (const c of children) {
+      const i = c._item == null ? 0 : c._item;
+      (units[i] = units[i] || []).push(c);
+    }
+    return sequenceUnits(units.filter(Boolean), el.animations, name, warn);
+  }
   const group = {
     type: 'group',
-    name: el.name || el.type,
+    name,
     position: pos,
     children,
   };
   if (el.animations && el.animations.length) group.animations = el.animations;
-  return group;
+  return [group];
 }
+
+/**
+ * Place the parts of a component, group or box as separate top-level
+ * elements so their animations can play item by item. `units` is a list of
+ * element lists, one per item, in play order. An animation with by "item"
+ * gets one effect per unit (timed by unitTiming); any other animation plays
+ * on all parts at once. Every effect is stored on the first element and
+ * points at its element through `_target`, which keeps the effects in the
+ * order the animations were written.
+ */
+function sequenceUnits(units, animations, name, warn = () => {}) {
+  const all = units.flat();
+  if (all.length === 0) return [];
+  units.forEach((unit, i) => unit.forEach(c => { if (!c.name) c.name = `${name} ${i + 1}`; }));
+
+  const effects = [];
+  for (const anim of animations || []) {
+    const { by, stagger, ...base } = anim;
+    if (by && by !== 'item') warn(`"${name}" ${anim.type}: by "${by}" only works on a text or a shape with text; animating it as a whole`);
+    const groups = by === 'item' ? units : [all];
+    groups.forEach((unit, i) => {
+      const t = by === 'item' ? unitTiming(anim, i) : { trigger: anim.trigger, delay: anim.delay || 0 };
+      unit.forEach((el, k) => effects.push({
+        ...base,
+        ...(k === 0 ? t : { trigger: 'withPrevious', delay: t.delay }),
+        _target: el,
+      }));
+    });
+  }
+  all[0].animations = effects;
+  return all;
+}
+
 
 // ============================================================
 // Helpers
@@ -76,7 +132,7 @@ function buildProgressBar(el, pos) {
 
   children.push(shape(st, { x: pos.x, y: pos.y, w: pos.w, h: pos.h }, { fill: track }));
   if (value > 0) {
-    children.push(shape(st, { x: pos.x, y: pos.y, w: Math.max(pos.w * value / 100, pos.h * 0.1), h: pos.h }, { fill: fillColor }));
+    children.push(shape(st, { x: pos.x, y: pos.y, w: Math.max(pos.w * value / 100, pos.h * 0.1), h: pos.h }, { fill: fillColor, _item: 0 }));
   }
   if (el.showLabel !== false) {
     const label = el.label != null ? el.label : `${Math.round(value)}%`;
@@ -86,6 +142,7 @@ function buildProgressBar(el, pos) {
       bold: true,
       align: 'center',
       vertAlign: 'middle',
+      _item: 1,
     }));
   }
   return children;
@@ -117,6 +174,7 @@ function buildProgressRing(el, pos) {
     children.push(shape('blockArc', box, {
       fill: fillColor,
       rotation: -90,
+      _item: 0,
       adjust: {
         adj1: 0,
         adj2: sweep,
@@ -132,6 +190,7 @@ function buildProgressRing(el, pos) {
       bold: true,
       align: 'center',
       vertAlign: 'middle',
+      _item: 1,
     }));
   }
   return children;
@@ -176,15 +235,16 @@ function buildBarChart(el, pos) {
     children.push(shape('roundRect', { x: bx, y: by, w: barW, h }, {
       fill: c,
       adjust: { adj: 8000 },
+      _item: i,
     }));
     if (el.showValues) {
       children.push(text(String(valueLabels[i] != null ? valueLabels[i] : val), { x: pos.x + i * slot, y: by - valueH, w: slot, h: valueH }, {
-        fontSize: el.fontSize || 11, color: labelColor, align: 'center', vertAlign: 'bottom',
+        fontSize: el.fontSize || 11, color: labelColor, align: 'center', vertAlign: 'bottom', _item: i,
       }));
     }
     if (hasLabels) {
       children.push(text(String(labels[i] != null ? labels[i] : ''), { x: pos.x + i * slot, y: baselineY, w: slot, h: labelH }, {
-        fontSize: el.fontSize || 11, color: labelColor, align: 'center', vertAlign: 'middle',
+        fontSize: el.fontSize || 11, color: labelColor, align: 'center', vertAlign: 'middle', _item: i,
       }));
     }
   });
@@ -222,6 +282,7 @@ function buildKpiCard(el, pos) {
     bold: true,
     align: el.align || 'left',
     vertAlign: 'middle',
+    _item: 0,
   }));
   if (el.label != null) {
     children.push(text(String(el.label), { x: innerX, y: pos.y + pos.h * 0.62, w: innerW, h: pos.h * 0.26 }, {
@@ -229,6 +290,7 @@ function buildKpiCard(el, pos) {
       color: el.labelColor || '808080',
       align: el.align || 'left',
       vertAlign: 'middle',
+      _item: 1,
     }));
   }
   if (el.delta != null) {
@@ -239,6 +301,7 @@ function buildKpiCard(el, pos) {
       bold: true,
       align: 'right',
       vertAlign: 'top',
+      _item: 2,
     }));
   }
   return children;
@@ -264,7 +327,7 @@ function buildRatingStars(el, pos) {
   const children = [];
   for (let i = 0; i < max; i++) {
     const x = startX + i * (size + gap);
-    children.push(shape('star5', { x, y, w: size, h: size }, { fill: i < Math.round(rating) ? filled : empty }));
+    children.push(shape('star5', { x, y, w: size, h: size }, { fill: i < Math.round(rating) ? filled : empty, _item: i }));
   }
   return children;
 }
@@ -293,6 +356,7 @@ function buildTimeline(el, pos) {
     const cx = pos.x + slot * (i + 0.5);
     children.push(shape('ellipse', { x: cx - dot / 2, y: centerY - dot / 2, w: dot, h: dot }, {
       fill: Array.isArray(el.colors) ? el.colors[i % el.colors.length] : dotColor,
+      _item: i,
     }));
     const above = i % 2 === 0;
     const ly = above ? pos.y : centerY + dot;
@@ -300,7 +364,7 @@ function buildTimeline(el, pos) {
     const lines = [{ text: String(item.label != null ? item.label : ''), bold: true, fontSize: el.fontSize || 12, color: labelColor }];
     if (item.sub != null) lines.push({ text: String(item.sub), fontSize: (el.fontSize || 12) - 2, color: '909090' });
     children.push(text(lines, { x: cx - slot / 2, y: ly, w: slot, h: lh }, {
-      align: 'center', vertAlign: above ? 'bottom' : 'top',
+      align: 'center', vertAlign: above ? 'bottom' : 'top', _item: i,
     }));
   });
   return children;
@@ -337,9 +401,10 @@ function buildProcessFlow(el, pos) {
       bold: true,
       align: 'center',
       vertAlign: 'middle',
+      _item: i,
     }));
   });
   return children;
 }
 
-module.exports = { expandComponents, COMPONENT_TYPES };
+module.exports = { expandComponents, sequenceUnits, COMPONENT_TYPES };

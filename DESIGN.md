@@ -272,13 +272,41 @@ one `<p:timing>` tree per slide.
 ### Trigger → click-group model
 
 Each animation has a `trigger`: `onClick` | `withPrevious` | `afterPrevious`.
-Animations are sorted by `order`, then grouped into **click groups**:
-- `onClick` starts a **new** group (requires a click to advance).
-- `withPrevious` / `afterPrevious` join the **current** group.
+Animations are sorted by `order` (stable), then laid out the way PowerPoint
+writes them: **click group > step > effect**.
+- `onClick` starts a **new click group** (`<p:cond delay="indefinite"/>`, waits for a click).
+- `afterPrevious` starts a **new step** inside the current group.
+- `withPrevious` joins the **current step**.
 
-Mapped to `nodeType`: `clickEffect` / `withEffect` / `afterEffect`. The **first
-`afterPrevious` effect auto-plays on slide entry** and (with `fill="hold"`) holds
-its end state — this is how "spin once when the slide appears, then stop" works.
+Each step's `<p:cond delay>` is the running end time of the steps before it:
+the longest `delay + duration` of their effects (2 × duration for `autoRev`
+effects, plus the per-unit gaps of word/letter builds; see `effectEnd`).
+PowerPoint plays the XML as written: earlier versions put every effect of a group
+in one step, so `afterPrevious` effects all started together.
+
+Mapped to `nodeType`: `clickEffect` / `withEffect` / `afterEffect` (only a
+label for the Animation Pane). A first group that starts with
+`afterPrevious` / `withPrevious` also gets `<p:cond evt="onBegin"><p:tn val="2"/>`
+(the main sequence id), so it **auto-plays on slide entry**; `fill="hold"`
+keeps the end state — this is how "spin once when the slide appears, then stop" works.
+
+### Parts one after another (`by`, `stagger`)
+
+- `by: "item"` is resolved **before** timing, in `components.js` (components,
+  groups) and `layout/index.js` (`asSequence` for boxes). Builders tag each
+  child with `_item`; the parts are emitted as top-level shapes (PowerPoint
+  cannot animate shapes inside a group) and `sequenceUnits` stores every effect
+  on the first part with `_target` pointing at the shape it animates, which
+  keeps the effects in the order the animations were written.
+- `by: "paragraph" | "word" | "letter"` is resolved in `expandTextBuild`
+  (`animation.js`). Paragraphs become one effect each, targeting
+  `<p:spTgt><p:txEl><p:pRg st=i end=i/>`, plus `<p:bldP build="p"/>` in
+  `<p:bldLst>`. Words / letters are one effect with
+  `<p:iterate type="wd|lt"><p:tmPct/>` (gap as a % of the duration).
+- `unitTiming` is shared: part 0 keeps `trigger`/`delay`; with `stagger` the
+  rest are `withPrevious` at `delay + i × stagger`, otherwise they repeat the trigger.
+- The structures were copied from decks PowerPoint saved itself (built through
+  COM with `Sequence.AddEffect` / `ConvertToTextUnitEffect`).
 
 ### Behavior-node catalog
 
@@ -315,7 +343,7 @@ was missing `<p:attrName>r</p:attrName>`). The required attr name per node:
 |---|---|---|
 | `<p:animRot>` | `r` | degrees × 60000 |
 | `<p:anim>` ppt_x/ppt_y | `ppt_x` / `ppt_y` | fraction of slide (1.0 = full slide), or `#ppt_x` self-ref expressions |
-| `<p:anim>` ppt_w/ppt_h | `ppt_w` / `ppt_h` | **scale factor where `1.0` = 100%** (NOT percent) |
+| `<p:anim>` ppt_w/ppt_h | `ppt_w` / `ppt_h` | fraction of the **slide** size, so scale the shape with `#ppt_w*1.1` expressions (`strVal`) |
 | `<p:anim>` opacity | `style.opacity` | 100000 = 100% |
 | `<p:animClr>` | `fillColor` | `<a:srgbClr>` |
 | `<p:animMotion>` | `ppt_x` `ppt_y` | path coords as fraction of slide |
@@ -323,8 +351,9 @@ was missing `<p:attrName>r</p:attrName>`). The required attr name per node:
 | `<p:animScale>` | *(none — uses `<p:from>/<p:to>/<p:by>` with x,y where 100000 = 100%)* | |
 
 > Note the two different scale conventions: **`animScale`** uses `100000 = 100%`,
-> but the **`ppt_w`/`ppt_h` fltVal in `<p:anim>`** uses `1.0 = 100%`. Mixing
-> these up produces shapes that balloon to 100× or do nothing.
+> but **`ppt_w`/`ppt_h` in `<p:anim>`** are fractions of the slide: a bare
+> `1.1` makes the shape 110% of the slide width (the old `bounceIn`/`swivel` bug,
+> now fixed). Write `#ppt_w*factor` as a `strVal`, like PowerPoint's presets.
 
 ### Regression-testing animations
 

@@ -40,18 +40,19 @@ There is no linter. `npm test` writes to `/tmp`. Generated `*.pptx`, `output.*` 
 - Deliberate deviations from CSS:
   - Default direction is `column`.
   - Children of a column get `flexShrink: 0` (emulating `min-height: auto`, which Yoga lacks); children of a row get 1.
-  - An animated box is flattened into one `group`, and its children's animations are dropped.
+  - An animated box is flattened into one `group`, and its children's animations are dropped. With `by: "item"` the box's children are emitted as separate shapes instead (`asSequence`).
 - Text boxes get per-side `insets` (padding + border), which `generateTextShape` writes as `lIns/tIns/rIns/bIns`.
 
 **Units:** JSON uses inches, points and degrees. All conversion lives in `src/utils/constants.js` and `xml-helpers.js` (EMU = inch × 914400, font size × 100, angles × 60000, line width × 12700).
 
 ## Invariants and gotchas
 
-- **Animations:** every behavior node that animates a property must carry `<p:attrNameLst>` inside `<p:cBhvr>`, or PowerPoint silently ignores it. `animScale` uses 100000 = 100%, while `ppt_w`/`ppt_h` use 1.0 = 100%. See DESIGN.md §9.
+- **Animations:** every behavior node that animates a property must carry `<p:attrNameLst>` inside `<p:cBhvr>`, or PowerPoint silently ignores it. `animScale` uses 100000 = 100%, while `ppt_w`/`ppt_h` are fractions of the slide (scale with `#ppt_w*f`). Timing is click group > step > effect; `afterPrevious` only waits because it opens a new step with the running end time as its delay. See DESIGN.md §9.
 - **Slide element order** must follow CT_Slide: `cSld`, `clrMapOvr`, `transition`, `timing`.
 - **Newer transitions** (p14/p15/Morph, or any custom `duration`) must stay wrapped in `mc:AlternateContent` with a classic fallback.
 - **Theme color references** (`accent1`…) are fine for element colors and fills. Slide `background` and table text `color` are written as `srgbClr`, so they must be hex.
-- **Groups:** the generator does not support nested groups or animated group children. Animate the group itself.
+- **Groups:** the generator does not support nested groups or animated group children. Animate the group itself, or use `by: "item"`, which emits the children as separate shapes whose effects ride on the first one via `_target`.
+- **Verifying animations:** PowerPoint (COM) is the reference. Read `Slide.TimeLine.MainSequence` to see how it understood a deck, and `Presentation.CreateVideo` + ffmpeg frames to see it play.
 - **`spcPct` (line spacing) is in thousandths of a percent:** `lineSpacing: 1.1` → `val="110000"`. Before 2.0 it was written as `11000` (11%), so decks made with older versions show overlapping lines.
 
 ## Keep in sync when changing behavior

@@ -144,7 +144,8 @@ or directions are reported as warnings by `generate`.
   "align": "center",               // left|center|right|justify
   "vertAlign": "middle",           // top|middle|bottom
   "lineSpacing": 1.5,
-  "bullet": true,                  // or "•", "→", etc.
+  "bullet": true,                  // or "•", "→", etc. Gets a 1 em hanging indent
+                                   // unless marginLeft / indent (inches) are set.
 
   // Box style:
   "fill": "CCCCCC",                // Background fill
@@ -248,7 +249,9 @@ or directions are reported as warnings by `generate`.
 ```json
 {
   "type": "group",
+  "name": "!!wheel",               // Optional; same name on the next slide = Morph moves/rotates it
   "position": { "x": 1, "y": 1, "w": 5, "h": 5 },
+  "rotation": 0,                   // Rotates the whole group around its centre
   "children": [
     { "type": "shape", ... },
     { "type": "text", ... },
@@ -323,7 +326,8 @@ An element's own fields (`fontSize`, `color`, `align`, …) override its style.
   `generate` prints a warning naming the element (`slide 2 > box[1] > text[0]`).
 - Text, shapes with text, tables, images (aspect ratio read from PNG/JPEG/GIF) and
   components size themselves; a plain `shape` needs `width`/`height` or `grow`.
-  Components without a height get a default (`progressBar` 0.4", `kpiCard` 1.4", …).
+  Components without a height get a default (`progressBar` 0.4", `kpiCard` 1.4", …);
+  in a row, `grow` sizes the width and the default becomes a minimum height.
 - A box with `animations` becomes one group and animates as a unit; animations
   on its descendants are then ignored. Animate children individually by leaving
   the box itself un-animated, or give the box an animation with `by: "item"` to

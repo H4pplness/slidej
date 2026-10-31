@@ -99,7 +99,8 @@ function xfrmXml(pos, rotation) {
   const flipV = pos.flipV ? ' flipV="1"' : '';
   return `<a:xfrm${rot}${flipH}${flipV}>` +
     `<a:off x="${inchToEmu(pos.x || 0)}" y="${inchToEmu(pos.y || 0)}"/>` +
-    `<a:ext cx="${inchToEmu(pos.w || 1)}" cy="${inchToEmu(pos.h || 1)}"/>` +
+    // A zero width or height is real (a straight line); only a missing one defaults to 1".
+    `<a:ext cx="${inchToEmu(pos.w != null ? pos.w : 1)}" cy="${inchToEmu(pos.h != null ? pos.h : 1)}"/>` +
     `</a:xfrm>`;
 }
 
@@ -126,6 +127,19 @@ function runPropsXml(style = {}) {
 }
 
 /**
+ * Left margin and first-line indent (inches) of a paragraph. A bullet without
+ * either gets a 1 em hanging indent (PowerPoint's own ratio), so the bullet
+ * sits in the margin and wrapped lines align with the text.
+ */
+function bulletIndent(para = {}) {
+  if (!para.bullet || para.marginLeft != null || para.indent != null) {
+    return { marginLeft: para.marginLeft, indent: para.indent };
+  }
+  const em = (para.fontSize || 18) / 72;
+  return { marginLeft: em, indent: -em };
+}
+
+/**
  * Generate paragraph properties XML
  */
 function paraPropsXml(para = {}) {
@@ -134,11 +148,12 @@ function paraPropsXml(para = {}) {
     const map = { left: 'l', center: 'ctr', right: 'r', justify: 'just' };
     attrs.push(`algn="${map[para.align] || para.align}"`);
   }
-  if (para.indent != null) {
-    attrs.push(`indent="${inchToEmu(para.indent)}"`);
+  const { marginLeft, indent } = bulletIndent(para);
+  if (indent != null) {
+    attrs.push(`indent="${inchToEmu(indent)}"`);
   }
-  if (para.marginLeft != null) {
-    attrs.push(`marL="${inchToEmu(para.marginLeft)}"`);
+  if (marginLeft != null) {
+    attrs.push(`marL="${inchToEmu(marginLeft)}"`);
   }
 
   // Child order is fixed by CT_TextParagraphProperties: lnSpc before buChar.
@@ -161,5 +176,5 @@ function paraPropsXml(para = {}) {
 module.exports = {
   escXml, XML_DECL,
   colorXml, solidFillXml, gradientFillXml, fillXml,
-  lineXml, xfrmXml, avLstXml, runPropsXml, paraPropsXml,
+  lineXml, xfrmXml, avLstXml, runPropsXml, paraPropsXml, bulletIndent,
 };

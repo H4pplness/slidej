@@ -142,6 +142,42 @@ test('components get a position from the flow', async () => {
   near(p.w, 9, 'stretches'); near(p.h, 0.4, 'default component height');
 });
 
+test('components that grow along a row keep a default height', async () => {
+  const { model } = await applyLayout(deck({
+    layout: { padding: 0.5 },
+    elements: [
+      { type: 'box', style: { direction: 'row', gap: 0.2 }, children: [
+        { type: 'kpiCard', value: '1', style: { grow: 1 } },
+        { type: 'kpiCard', value: '2', style: { grow: 1 } },
+      ] },
+      { type: 'text', text: 'below' },
+    ],
+  }));
+  const [a, b, below] = model.slides[0].elements;
+  near(a.position.h, 1.4, 'kpiCard default height'); near(b.position.w, 4.4, 'grow still sizes the width');
+  near(below.position.y, 0.5 + 1.4, 'next item starts below the row');
+});
+
+test('a taller row still stretches a growing component', async () => {
+  const { model } = await applyLayout(deck({
+    elements: [{ type: 'box', position: { x: 0, y: 0, w: 10, h: 3 }, style: { direction: 'row', height: 3 }, children: [
+      { type: 'kpiCard', value: '1', style: { grow: 1 } },
+    ] }],
+  }));
+  near(model.slides[0].elements[0].position.h, 3, 'stretches past the default');
+});
+
+test('a bullet hanging indent is measured as part of the text width', async () => {
+  const width = async bullet => {
+    const { model } = await applyLayout(deck({
+      layout: { padding: 0, alignItems: 'start' },
+      elements: [{ type: 'text', text: [{ text: 'short line', bullet }], style: { fontSize: 18 } }],
+    }));
+    return model.slides[0].elements[0].position.w;
+  };
+  near(await width(true) - await width(false), 0.25, '1 em at 18pt', 0.02);
+});
+
 (async () => {
   let failed = 0;
   for (const t of tests) {

@@ -13,6 +13,7 @@ const path = require('path');
 const { FontBook, measureParagraphs } = require('./fonts');
 const { resolveStyle, inheritText, edges } = require('./style');
 const { expandComponents, sequenceUnits, COMPONENT_TYPES } = require('../generators/components');
+const { bulletIndent } = require('../utils/xml-helpers');
 
 let yogaPromise = null;
 function loadYoga() {
@@ -173,9 +174,13 @@ function build(ctx, el, inherited, where, childOverride, parentIsRow = false) {
   } else if (el.type === 'table') {
     if (style.height === undefined) node.setMeasureFunc((width, wMode) => measureTable(ctx, el, style, inherited, width, wMode));
   } else if (COMPONENT_TYPES.includes(el.type)) {
-    if (style.height === undefined && style.flexGrow === undefined && style.aspectRatio === undefined) {
+    // In a row, grow sizes the width, so the component still needs a height:
+    // a minimum, so a taller row can still stretch it.
+    const growsHeight = style.flexGrow !== undefined && !parentIsRow;
+    if (style.height === undefined && style.aspectRatio === undefined && !growsHeight) {
       if (el.type === 'progressRing') node.setAspectRatio(1);
-      else node.setHeight(COMPONENT_HEIGHT[el.type] || 1);
+      else if (style.flexGrow === undefined) node.setHeight(COMPONENT_HEIGHT[el.type] || 1);
+      else if (style.minHeight === undefined) node.setMinHeight(COMPONENT_HEIGHT[el.type] || 1);
     }
   } else if (el.type === 'group') {
     ctx.warn(`${where}: "group" is not supported inside a flex layout; use a box with animations instead`);
@@ -274,10 +279,15 @@ function paragraphs(ctx, el, style, inherited) {
     letterSpacing: r.letterSpacing !== undefined ? r.letterSpacing : base.letterSpacing,
   });
   const list = typeof el.text === 'string' ? [el.text] : Array.isArray(el.text) ? el.text : [String(el.text == null ? '' : el.text)];
+  // Text starts after the left margin (a bullet's hanging indent), so lines wrap earlier.
+  const margin = (p, runs) => bulletIndent({ ...p, fontSize: p.fontSize || runs[0].fontSize }).marginLeft || 0;
   return list.map(p => {
-    if (typeof p === 'string') return { runs: [run({ text: p })], lineSpacing: base.lineSpacing };
-    if (p.runs) return { runs: p.runs.map(r => run({ ...p, ...r })), lineSpacing: p.lineSpacing || base.lineSpacing };
-    return { runs: [run(p)], lineSpacing: p.lineSpacing || base.lineSpacing };
+    if (typeof p === 'string') {
+      const runs = [run({ text: p })];
+      return { runs, lineSpacing: base.lineSpacing, marginLeft: margin(el, runs) };
+    }
+    const runs = p.runs ? p.runs.map(r => run({ ...p, ...r })) : [run(p)];
+    return { runs, lineSpacing: p.lineSpacing || base.lineSpacing, marginLeft: margin(p, runs) };
   });
 }
 

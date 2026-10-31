@@ -89,6 +89,17 @@ test('bounceIn scales the shape\'s own size, not the slide', () => {
   assert.doesNotMatch(xml, /fltVal/);
 });
 
+test('wipe names the side it starts from, as PowerPoint writes it', () => {
+  // Pairs taken from effects PowerPoint creates itself (Effect Options → From …)
+  const wipe = direction => timing([el([{ type: 'wipeIn', direction, trigger: 'afterPrevious' }])]).xml;
+  const expected = { bottom: [4, 'down'], top: [1, 'up'], down: [4, 'down'], up: [1, 'up'], left: [8, 'left'], right: [2, 'right'] };
+  for (const [direction, [subtype, filter]] of Object.entries(expected)) {
+    const xml = wipe(direction);
+    assert.match(xml, new RegExp(`presetID="22" presetClass="entr" presetSubtype="${subtype}"`), direction);
+    assert.match(xml, new RegExp(`filter="wipe\\(${filter}\\)"`), direction);
+  }
+});
+
 test('component by item: parts become elements, items staggered, base with item 0', () => {
   const [first, ...rest] = expandComponents([{
     type: 'barChart', name: 'Sales', position: { x: 1, y: 1, w: 4, h: 3 }, data: [1, 2, 3], labels: ['a', 'b', 'c'], axis: true,

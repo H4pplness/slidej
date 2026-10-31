@@ -276,7 +276,7 @@ function generateGroup(el, rIdMap, getNextSpId) {
 
   return `<p:grpSp>
   <p:nvGrpSpPr>
-    <p:cNvPr id="${spId}" name="Group ${spId}"/>
+    <p:cNvPr id="${spId}" name="${escXml(el.name || `Group ${spId}`)}"/>
     <p:cNvGrpSpPr/>
     <p:nvPr/>
   </p:nvGrpSpPr>
@@ -311,6 +311,12 @@ function textRunsXml(text, rPr) {
   return xml;
 }
 
+// Paragraph objects take these from their element unless they set their own
+// (fontSize only sizes the default bullet indent here; runs carry the real one).
+function inheritedParaProps(el) {
+  return { align: el.align, lineSpacing: el.lineSpacing, fontSize: el.fontSize };
+}
+
 function generateParagraphs(el) {
   // Text revealed paragraph by paragraph: each "\n" line becomes its own
   // paragraph so the animation can target it.
@@ -335,7 +341,8 @@ function generateParagraphs(el) {
         const rPr = runPropsXml(el);
         xml += `<a:p>${pPr}${textRunsXml(para, rPr)}</a:p>`;
       } else if (para.runs) {
-        const pPr = paraPropsXml(para);
+        const first = para.runs[0] || {};
+        const pPr = paraPropsXml({ ...inheritedParaProps(el), fontSize: el.fontSize || first.fontSize, ...para });
         let runsXml = '';
         for (const run of para.runs) {
           const rPr = runPropsXml({ ...el, ...run });
@@ -343,8 +350,7 @@ function generateParagraphs(el) {
         }
         xml += `<a:p>${pPr}${runsXml}</a:p>`;
       } else {
-        // Paragraph objects inherit the element's alignment unless they set their own.
-        const pPr = paraPropsXml({ align: el.align, ...para });
+        const pPr = paraPropsXml({ ...inheritedParaProps(el), ...para });
         const rPr = runPropsXml({ ...el, ...para });
         xml += `<a:p>${pPr}${textRunsXml(para.text, rPr)}</a:p>`;
       }

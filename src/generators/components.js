@@ -65,7 +65,9 @@ function buildComponent(el, warn) {
   }
   const group = {
     type: 'group',
-    name,
+    // Only a user-given name: several components of one type on a slide would
+    // otherwise share a name and confuse Morph matching.
+    name: el.name,
     position: pos,
     children,
   };

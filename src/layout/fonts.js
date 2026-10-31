@@ -126,7 +126,7 @@ function lineHeightFactor(book, run) {
 /**
  * Break paragraphs into lines and measure them.
  * @param {FontBook} book
- * @param {Array<{runs: Array<{text, fontSize, fontFamily, bold, italic, letterSpacing}>, lineSpacing}>} paragraphs
+ * @param {Array<{runs: Array<{text, fontSize, fontFamily, bold, italic, letterSpacing}>, lineSpacing, marginLeft}>} paragraphs (marginLeft in inches)
  * @param {number} maxWidth inches (Infinity for unconstrained)
  * @returns {{width: number, height: number, lines: number}}
  */
@@ -136,6 +136,8 @@ function measureParagraphs(book, paragraphs, maxWidth) {
   let lines = 0;
 
   for (const para of paragraphs) {
+    const margin = para.marginLeft || 0;
+    const avail = maxWidth - margin;
     // Hard line breaks split a paragraph into independent line groups.
     const groups = [[]];
     for (const run of para.runs) {
@@ -157,7 +159,7 @@ function measureParagraphs(book, paragraphs, maxWidth) {
       let lineRun = null;   // largest run on the line (sets the line height)
       const flush = () => {
         const run = lineRun || baseRun;
-        width = Math.max(width, visible);
+        width = Math.max(width, visible + margin);
         height += (run.fontSize * lineHeightFactor(book, run) * (para.lineSpacing || 1)) / 72;
         lines += 1;
         cursor = 0;
@@ -173,12 +175,12 @@ function measureParagraphs(book, paragraphs, maxWidth) {
         const full = textWidth(book, tok.text, tok.run);
         const word = tok.text.trimEnd();
         const trimmed = textWidth(book, word, tok.run);
-        if (cursor > 0 && cursor + trimmed > maxWidth + EPSILON) flush();
-        if (cursor === 0 && trimmed > maxWidth + EPSILON) {
+        if (cursor > 0 && cursor + trimmed > avail + EPSILON) flush();
+        if (cursor === 0 && trimmed > avail + EPSILON) {
           // A single word wider than the box: break it by characters.
           let chunk = '';
           for (const ch of word) {
-            if (chunk && textWidth(book, chunk + ch, tok.run) > maxWidth + EPSILON) {
+            if (chunk && textWidth(book, chunk + ch, tok.run) > avail + EPSILON) {
               place(tok.run, textWidth(book, chunk, tok.run), textWidth(book, chunk, tok.run));
               flush();
               chunk = '';

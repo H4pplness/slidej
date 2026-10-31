@@ -17,13 +17,6 @@ slidej parse input.pptx -o output.json
 slidej parse input.pptx                       # stdout
 slidej parse input.pptx --no-images -o out.json
 
-# Templates
-slidej template list                          # list all
-slidej template info <name>                   # show style guide
-slidej template use <name> -o deck.json       # export for editing
-slidej template save input.json <name> -d "Description" -t "tag1,tag2"
-slidej template remove <name>
-
 # Helpers
 slidej schema                                 # print JSON schema
 slidej example -o example.json                # demo deck
@@ -31,17 +24,7 @@ slidej example -o example.json                # demo deck
 
 ### Templates
 
-| Template | Style | Best for |
-|----------|-------|----------|
-| `title-slide` | Dark hero, centered | Title screens, section dividers |
-| `pitch-deck` | Professional dark-to-light | Pitches, proposals |
-| `report` | Clean corporate, tables | Reports, dashboards |
-| `minimal` | Whitespace, typography | Academic, text-heavy |
-| `dark-modern` | Dark UI, gradient accents | Tech, SaaS demos |
-| `sunset-wave` | Warm gradients, organic | Creative, storytelling |
-| `candy-pop` | Bold pop-art on white | Events, campaigns |
-| `ocean-aurora` | Deep cool-tone, glow | Tech showcases, premium |
-| `neon-garden` | Neon-on-black | Creative agencies, entertainment |
+SlideJ has no built-in templates. To design a reusable template (palette, typography, layouts, animation language + sample slides) or to build a deck in a consistent style, use the **slidej-template** skill. A template is a plain deck JSON, so it is used with `slidej generate` like any other deck.
 
 ---
 
@@ -607,10 +590,8 @@ slidej generate deck.json -o updated.pptx              # Step 2: regenerate
 
 ## Workflow: Create from Template
 
+Follow the **slidej-template** skill. In short: copy the template JSON, drop its `name`/`description`/`tags`/`guide` keys if you like (the generator ignores them), keep the slides you need, replace the content, then:
+
 ```bash
-slidej template list                                   # browse
-slidej template info pitch-deck                        # see style guide
-slidej template use pitch-deck -o deck.json            # export
-# Edit deck.json
-slidej generate deck.json -o presentation.pptx         # generate
+slidej generate deck.json -o presentation.pptx
 ```

@@ -46,11 +46,6 @@ slidej generate parsed.json -o edit.pptx # 4. Chỉnh sửa & tạo lại
 |------|-------|-------|
 | `slidej generate <input.json>` | `gen` | Tạo PPTX từ file JSON |
 | `slidej parse <input.pptx>` | — | Phân tích PPTX thành JSON |
-| `slidej template list` | `tpl ls` | Xem danh sách template |
-| `slidej template use <name>` | `tpl use` | Xuất template thành JSON để chỉnh sửa |
-| `slidej template save <json> <name>` | `tpl save` | Lưu file JSON thành template |
-| `slidej template info <name>` | `tpl info` | Xem chi tiết template |
-| `slidej template remove <name>` | `tpl rm` | Xóa template tùy chỉnh |
 | `slidej example` | — | Xuất file JSON mẫu |
 | `slidej schema` | — | In tài liệu tham chiếu JSON schema đầy đủ |
 
@@ -66,42 +61,22 @@ slidej example -o starter.json                       # Ghi file JSON mẫu
 
 ## Template
 
-SlideJ có sẵn các template dưới dạng **hướng dẫn phong cách** — mỗi template định nghĩa ngôn ngữ thiết kế (bảng màu, bố cục, component, animation) kèm slide tham khảo. Dùng làm điểm khởi đầu, rồi tự do thêm, bớt, sắp xếp lại slide.
+SlideJ không kèm template có sẵn. Template là một file JSON deck bình thường, chứa hướng dẫn phong cách (`guide`) và mỗi kiểu bố cục một slide mẫu (cover, section, content, cards, metrics, comparison, process, closing), nên generate được như mọi deck khác.
 
-| Template | Phong cách | Tone |
-|----------|-----------|------|
-| `title-slide` | Hero tối, trọng tâm giữa slide | Mạnh mẽ, tự tin |
-| `pitch-deck` | Chuyên nghiệp tối-sang, mạch tường thuật | Thuyết phục, dữ liệu |
-| `report` | Corporate sạch, bảng biểu và KPI | Uy tín, rõ ràng |
-| `minimal` | Khoảng trắng tối giản, chỉ typography | Bình tĩnh, tập trung |
-| `dark-modern` | UI tối, gradient accent | Sắc nét, tương lai |
-| `sunset-wave` | Gradient ấm, hình dạng organic | Mơ màng, biểu cảm |
-| `candy-pop` | Pop-art, hình học sáng trên nền trắng | Vui nhộn, trẻ trung |
-| `ocean-aurora` | Tông lạnh sâu, hiệu ứng glow | Chìm đắm, sang trọng |
-| `neon-garden` | Neon trên nền đen, tương phản cao | Mạnh mẽ, nghệ thuật |
+Template do AI agent thiết kế bằng skill **`slidej-template`** (`skills/slidej-template/`). Skill này hướng dẫn:
 
-Mỗi template có `guide` chứa bảng màu, bố cục, component, animation và gợi ý tùy chỉnh.
-Chạy `slidej template info <name>` để xem đầy đủ.
+- xác định hệ thiết kế: bảng màu, cỡ chữ, lưới, component, chuyển động
+- dựng và kiểm tra slide mẫu (`scripts/check-template.js`)
+- trích template từ file `.pptx` có sẵn
+- tạo deck mới từ template
 
-### Luồng làm việc với template
+Skill cũng có sẵn 9 phong cách mẫu để bắt đầu (`references/style-presets.md`).
 
 ```bash
-slidej template list                        # 1. Duyệt template
-slidej template info pitch-deck             # 2. Xem style guide
-slidej template use pitch-deck -o deck.json # 3. Xuất ra JSON
-# 4. Chỉnh sửa deck.json — thay text, màu, thêm/bớt slide
-slidej generate deck.json -o deck.pptx      # 5. Tạo PPTX
+# Nhờ agent: "tạo template SlideJ cho công ty tôi, tông navy + cam"
+node skills/slidej-template/scripts/check-template.js templates/acme.json  # kiểm tra
+slidej generate templates/acme.json -o acme-preview.pptx                   # xem thử
 ```
-
-### Lưu template riêng
-
-```bash
-slidej template save deck.json my-brand -d "Template công ty" -t "company,branded"
-slidej template list                        # giờ có my-brand
-slidej template remove my-brand             # xóa khi không cần
-```
-
-Template tùy chỉnh lưu tại `~/.slidej/templates/`, ghi đè template built-in cùng tên.
 
 ## Định dạng JSON
 
@@ -221,11 +196,7 @@ Thêm mảng `animations` vào bất kỳ element nào:
 ## Library API
 
 ```javascript
-const { generate, parse, listTemplates, getTemplate } = require('slidej');
-
-// Template
-const templates = listTemplates();
-const tpl = getTemplate('pitch-deck');
+const { generate, parse } = require('slidej');
 
 // Tạo PPTX
 await generate({ slides: [{ elements: [{ type: "text", text: "Xin chào", position: { x: 1, y: 1, w: 10, h: 2 } }] }] }, 'output.pptx');
@@ -236,9 +207,9 @@ const model = await parse('input.pptx');
 
 ## Dùng cho AI Agent
 
-**Từ template** (bài thuyết trình mới):
+**Từ template** (bài thuyết trình mới, xem skill `slidej-template`):
 ```
-template list → template use <name> -o deck.json → chỉnh JSON → generate deck.json -o final.pptx
+sao chép template.json → thay nội dung mẫu → generate deck.json -o final.pptx
 ```
 
 **Từ PPTX có sẵn** (chỉnh sửa):
@@ -246,7 +217,7 @@ template list → template use <name> -o deck.json → chỉnh JSON → generate
 parse input.pptx -o deck.json → chỉnh JSON → generate deck.json -o updated.pptx
 ```
 
-OpenAI Agent tool definition có sẵn tại `agents/openai.yaml`. Chạy `slidej schema` để xem JSON schema đầy đủ.
+Các skill cho agent nằm trong `skills/` (`slidej` cho schema và CLI, `slidej-template` cho template). Chạy `slidej schema` để xem JSON schema đầy đủ.
 
 ## Cấu trúc dự án
 
@@ -257,8 +228,9 @@ src/
   generators/           # JSON → PPTX engine
   parsers/              # PPTX → JSON engine
   utils/                # XML helpers, constants
-templates/              # Template hướng dẫn phong cách
-agents/                 # AI agent tool definitions
+skills/
+  slidej/               # Skill cho agent: JSON schema, CLI, mẫu animation
+  slidej-template/      # Skill cho agent: thiết kế, kiểm tra, tái sử dụng template
 ```
 
 ## Giấy phép

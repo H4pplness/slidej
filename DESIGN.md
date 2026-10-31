@@ -35,10 +35,9 @@ The whole value proposition is: **an agent can author/edit a deck as JSON**
 | `parse <input.pptx> -o out.json` | PPTX → JSON. `--no-images` strips base64 blobs; prints to stdout if `-o` omitted (pipe-friendly). |
 | `schema` | Prints `src/SCHEMA.md`. |
 | `example -o example.json` | Writes a built-in demo deck (see `generateExample()` in cli.js). |
-| `template list / use / save / remove / info` (alias `tpl`) | Manage reusable deck templates. |
 
 `src/index.js` is the **library entry** (`package.json` `main`): it re-exports
-`generate`, `parse`, `listTemplates`, `getTemplate`.
+`generate` and `parse`.
 
 ---
 
@@ -46,8 +45,8 @@ The whole value proposition is: **an agent can author/edit a deck as JSON**
 
 ```
 src/
-  cli.js                  CLI entry (commander). Argument parsing, template subcommands, the `example` deck.
-  index.js                Library entry. Re-exports generate/parse + template helpers.
+  cli.js                  CLI entry (commander). Argument parsing and the `example` deck.
+  index.js                Library entry. Re-exports generate/parse.
   SCHEMA.md               Authoritative JSON field reference. Keep in sync with generators/parsers.
 
   generators/             JSON → OOXML.  Each file emits one kind of package part as a string.
@@ -68,12 +67,11 @@ src/
     constants.js          EMU conversions, namespaces, ANIMATION_PRESETS, FLY_DIRECTIONS, SHAPE_TYPES, TRANSITIONS.
     xml-helpers.js        Small XML string builders: escXml, fillXml, lineXml, xfrmXml, avLstXml, run/paraPropsXml.
 
-templates/                Built-in deck templates (*.json). Loaded by cli.js + index.js.
-skills/SKILL.md           Agent skill description for driving slidej.
+skills/
+  slidej/SKILL.md         Agent skill for driving slidej (schema, CLI, animation patterns).
+  slidej-template/        Agent skill for authoring templates: SKILL.md, references/style-presets.md,
+                          scripts/check-template.js (dependency-free static checker).
 ```
-
-Custom templates live in `~/.slidej/templates/` (see `getCustomTemplateDir()`),
-and override built-ins of the same name.
 
 ---
 
@@ -315,12 +313,13 @@ that wasn't produced by SlideJ still yields a usable approximation.
 
 ## 11. Templates
 
-A template is just a deck JSON with extra metadata (`name`, `description`, `tags`,
-optional `guide`). `cli.js` loads built-ins from `templates/` and customs from
-`~/.slidej/templates/` (customs win on name collision). `template use` exports a
-copy for editing; `template save` stores the current JSON as a custom template.
-The `guide` block (palette/layout/components/animations notes) is shown by
-`template info` to help an agent style a deck consistently.
+SlideJ has no template code. A template is a deck JSON with extra keys
+(`name`, `description`, `tags`, `guide`, per-slide `archetype`) that the
+generator ignores, so a template file generates as-is. Authoring is documented
+for agents in `skills/slidej-template/`. Its checker hardcodes the animation,
+trigger and component lists, so update `scripts/check-template.js` when you add
+one of those. It also mirrors the hex-only rule for `generateBackground` and
+table text colors in `slide.js`.
 
 ---
 

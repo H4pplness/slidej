@@ -46,11 +46,6 @@ slidej generate parsed.json -o edit.pptx # 4. Edit & regenerate
 |---------|-------|-------------|
 | `slidej generate <input.json>` | `gen` | Create a PPTX from a JSON file |
 | `slidej parse <input.pptx>` | — | Parse a PPTX into JSON |
-| `slidej template list` | `tpl ls` | List available templates |
-| `slidej template use <name>` | `tpl use` | Export a template as JSON for editing |
-| `slidej template save <json> <name>` | `tpl save` | Save a JSON file as a reusable template |
-| `slidej template info <name>` | `tpl info` | Show detailed template info |
-| `slidej template remove <name>` | `tpl rm` | Remove a custom template |
 | `slidej example` | — | Output a sample JSON file |
 | `slidej schema` | — | Print the full JSON schema reference |
 
@@ -66,42 +61,22 @@ slidej example -o starter.json                       # Write sample JSON
 
 ## Templates
 
-SlideJ includes built-in templates as **style guides** — each defines a visual language (palette, layout patterns, component styles, animation approach) along with example slides. Use them as a starting point, then freely add, remove, or rearrange slides.
+SlideJ does not ship templates. A template is a plain deck JSON with a style guide (`guide`) and one sample slide per layout (cover, section, content, cards, metrics, comparison, process, closing), so it generates like any other deck.
 
-| Template | Style | Tone |
-|----------|-------|------|
-| `title-slide` | Dark hero, centered focal point | Dramatic, confident |
-| `pitch-deck` | Professional dark-to-light, narrative arc | Confident, data-driven |
-| `report` | Clean corporate, tables and KPI cards | Authoritative, clear |
-| `minimal` | Ultra-clean whitespace, typography only | Calm, focused |
-| `dark-modern` | Sleek dark UI, gradient accents | Sharp, futuristic |
-| `sunset-wave` | Warm gradients, organic shapes | Dreamy, expressive |
-| `candy-pop` | Bold pop-art, bright geometry on white | Joyful, youthful |
-| `ocean-aurora` | Deep cool-tone, ethereal glow | Immersive, elegant |
-| `neon-garden` | Neon-on-black, high contrast | Electric, rebellious |
+Templates are designed by an AI agent with the **`slidej-template`** skill (`skills/slidej-template/`). The skill covers:
 
-Each template includes a `guide` with palette, layout, components, animations, and customization tips.
-Run `slidej template info <name>` to view the full style guide.
+- defining the design system: palette, typography scale, grid, components, motion
+- building and validating the sample slides (`scripts/check-template.js`)
+- extracting a template from an existing `.pptx`
+- building a new deck from a template
 
-### Template workflow
+It also includes nine style presets as starting points (`references/style-presets.md`).
 
 ```bash
-slidej template list                        # 1. Browse templates
-slidej template info pitch-deck             # 2. View style guide
-slidej template use pitch-deck -o deck.json # 3. Export to JSON
-# 4. Edit deck.json — change text, colors, add/remove slides
-slidej generate deck.json -o deck.pptx      # 5. Generate PPTX
+# Ask your agent: "create a SlideJ template for my company, navy + orange"
+node skills/slidej-template/scripts/check-template.js templates/acme.json  # validate
+slidej generate templates/acme.json -o acme-preview.pptx                   # preview
 ```
-
-### Save your own
-
-```bash
-slidej template save deck.json my-brand -d "Company deck" -t "company,branded"
-slidej template list                        # now includes my-brand
-slidej template remove my-brand             # remove when done
-```
-
-Custom templates are stored in `~/.slidej/templates/` and override built-in templates with the same name.
 
 ## JSON Format
 
@@ -221,11 +196,7 @@ Add an `animations` array to any element:
 ## Library API
 
 ```javascript
-const { generate, parse, listTemplates, getTemplate } = require('slidej');
-
-// Templates
-const templates = listTemplates();
-const tpl = getTemplate('pitch-deck');
+const { generate, parse } = require('slidej');
 
 // Generate
 await generate({ slides: [{ elements: [{ type: "text", text: "Hello", position: { x: 1, y: 1, w: 10, h: 2 } }] }] }, 'output.pptx');
@@ -236,9 +207,9 @@ const model = await parse('input.pptx');
 
 ## For AI Agents
 
-**From template** (new presentations):
+**From template** (new presentations, see the `slidej-template` skill):
 ```
-template list → template use <name> -o deck.json → edit JSON → generate deck.json -o final.pptx
+copy template.json → replace sample content → generate deck.json -o final.pptx
 ```
 
 **From existing PPTX** (modify decks):
@@ -246,7 +217,7 @@ template list → template use <name> -o deck.json → edit JSON → generate de
 parse input.pptx -o deck.json → edit JSON → generate deck.json -o updated.pptx
 ```
 
-OpenAI Agent tool definition included at `agents/openai.yaml`. Run `slidej schema` for the full JSON schema reference.
+Agent skills live in `skills/` (`slidej` for the schema and CLI, `slidej-template` for templates). Run `slidej schema` for the full JSON schema reference.
 
 ## Project Structure
 
@@ -257,8 +228,9 @@ src/
   generators/           # JSON → PPTX engine
   parsers/              # PPTX → JSON engine
   utils/                # XML helpers, constants
-templates/              # Built-in style guide templates
-agents/                 # AI agent tool definitions
+skills/
+  slidej/               # Agent skill: JSON schema, CLI, animation patterns
+  slidej-template/      # Agent skill: design, validate and reuse templates
 ```
 
 ## License

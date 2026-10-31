@@ -1,6 +1,6 @@
 {
   "name": "slidej",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Generate PPTX from JSON. Parse PPTX back to JSON.",
   "main": "src/index.js",
   "bin": {

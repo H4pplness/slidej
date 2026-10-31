@@ -96,9 +96,11 @@ function paragraphs(text) {
 function checkTextFit(where, el) {
   const paras = paragraphs(el.text);
   if (!paras.length || !el.position) return;
-  const margin = el.margin != null ? el.margin : 0.1;
-  const boxW = el.position.w - 2 * margin;
-  const boxH = el.position.h - 2 * margin;
+  // PowerPoint's default insets are 0.1" left/right and 0.05" top/bottom.
+  const marginX = el.margin != null ? el.margin : 0.1;
+  const marginY = el.margin != null ? el.margin : 0.05;
+  const boxW = el.position.w - 2 * marginX;
+  const boxH = el.position.h - 2 * marginY;
   const spacing = el.lineSpacing || 1;
   let height = 0;
   for (const p of paras) {

@@ -242,9 +242,8 @@ here** — the rest of the code thinks in inches/points/degrees.
 `avLstXml(adjust)` emits shape adjust handles (`<a:gd name fmla="val N">`) — this
 is how `donut`/`blockArc`/`roundRect` get their geometry tweaked (used heavily by components).
 
-> ⚠️ Known bug in `paraPropsXml`: `lineSpacing` is multiplied by 100 then suffixed
-> with `"00"`, producing `13000` (=13%) for `1.3` instead of `130000` (=130%). Avoid
-> `lineSpacing` until this is fixed, or fix it to `Math.round(lineSpacing * 100000)`.
+> `lineSpacing` maps to `<a:spcPct val>` in thousandths of a percent (`1.1` → `110000`).
+> Before 2.0 it was written as `11000` (11%), which made lines overlap.
 
 ---
 

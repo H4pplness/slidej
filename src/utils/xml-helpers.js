@@ -134,24 +134,28 @@ function paraPropsXml(para = {}) {
     const map = { left: 'l', center: 'ctr', right: 'r', justify: 'just' };
     attrs.push(`algn="${map[para.align] || para.align}"`);
   }
-  if (para.lineSpacing) {
-    const sp = Math.round(para.lineSpacing * 100);
-    return `<a:pPr ${attrs.join(' ')}><a:lnSpc><a:spcPct val="${sp}00"/></a:lnSpc></a:pPr>`;
-  }
   if (para.indent != null) {
     attrs.push(`indent="${inchToEmu(para.indent)}"`);
   }
   if (para.marginLeft != null) {
     attrs.push(`marL="${inchToEmu(para.marginLeft)}"`);
   }
+
+  // Child order is fixed by CT_TextParagraphProperties: lnSpc before buChar.
+  let children = '';
+  if (para.lineSpacing) {
+    // spcPct is in thousandths of a percent: 1.0 → 100000 (100%).
+    children += `<a:lnSpc><a:spcPct val="${Math.round(para.lineSpacing * 100000)}"/></a:lnSpc>`;
+  }
   if (para.bullet) {
-    const bulletXml = para.bullet === true
+    children += para.bullet === true
       ? '<a:buChar char="•"/>'
       : `<a:buChar char="${escXml(para.bullet)}"/>`;
-    return `<a:pPr ${attrs.join(' ')}>${bulletXml}</a:pPr>`;
   }
-  if (attrs.length === 0) return '';
-  return `<a:pPr ${attrs.join(' ')}/>`;
+
+  if (attrs.length === 0 && !children) return '';
+  const open = attrs.length ? `<a:pPr ${attrs.join(' ')}` : '<a:pPr';
+  return children ? `${open}>${children}</a:pPr>` : `${open}/>`;
 }
 
 module.exports = {

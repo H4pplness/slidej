@@ -9,7 +9,7 @@
   "scripts": {
     "generate": "node src/cli.js generate",
     "parse": "node src/cli.js parse",
-    "test": "node test/layout.test.js && node test/transition.test.js && node src/cli.js example -o /tmp/test.json && node src/cli.js generate /tmp/test.json -o /tmp/test.pptx && node src/cli.js parse /tmp/test.pptx --no-images"
+    "test": "node test/layout.test.js && node test/transition.test.js && node test/text.test.js && node src/cli.js example -o /tmp/test.json && node src/cli.js generate /tmp/test.json -o /tmp/test.pptx && node src/cli.js parse /tmp/test.pptx --no-images"
   },
   "keywords": [
     "pptx",

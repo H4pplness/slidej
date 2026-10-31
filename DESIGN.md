@@ -60,6 +60,11 @@ src/
     rels.js               All the .rels relationship files (root, presentation, per-slide, master, layout).
     content-types.js      [Content_Types].xml.
 
+  layout/                 Flex layout engine, runs before the generators (see §5a).
+    index.js              applyLayout(): builds Yoga trees for slide.layout / box, emits absolute elements.
+    style.js              Class + inline style resolution, aliases, text inheritance, padding/margin shorthands.
+    fonts.js              Font file lookup (fontkit) and line-breaking text measurement.
+
   parsers/
     index.js              PPTX → JSON. Unzips, walks each part, rebuilds the model (incl. animation reverse-mapping).
 
@@ -111,8 +116,11 @@ Key conventions baked into the model:
 
 ## 5. Generate pipeline (`generators/index.js`)
 
-`generate(model, outputPath)` is the orchestrator. Order matters:
+`generate(model, outputPath, { baseDir })` is the orchestrator. Order matters:
 
+0. **Resolve flex layout** — `applyLayout(model)` (§5a) turns every `box` and
+   `slide.layout` into absolutely positioned primitives and collects warnings.
+   Decks without boxes are returned untouched (byte-identical output).
 1. **Collect media** — walk every element (and group child); for each `image`,
    assign `_mediaFileName` (`image1.png`, …) and queue the file for the zip.
 2. **Assign `_internalId`** to every element (`el_<slide>_<index>`), used to key the rIdMap.
@@ -122,7 +130,7 @@ Key conventions baked into the model:
 4. **Per slide:** `generateSlideRels(slideData)` → `{ xml, rIdMap }`, then
    `generateSlide(slideData, rIdMap, slideSize)`. Write `slideN.xml` + its `.rels`.
 5. **Load media bytes** (from file path or `data:` URI) into `ppt/media/`.
-6. **Zip** (DEFLATE level 6) and write to disk. Returns `{ path, size, slides }`.
+6. **Zip** (DEFLATE level 6) and write to disk. Returns `{ path, size, slides, warnings }`.
 
 ### PPTX package anatomy (what's inside the zip)
 
@@ -155,6 +163,36 @@ so **group children get globally-unique spIds** (needed for animation targeting)
 
 ---
 
+## 5a. Layout engine (`layout/`)
+
+A pre-pass that lets authors describe slides like HTML/CSS: nested `box` elements
+with padding/margin/border and flexbox, instead of hand-computed rects.
+
+- **Engine:** [Yoga](https://yogalayout.dev) (`yoga-layout` v3, WASM, ESM-only → loaded
+  with dynamic `import()` once, only when a deck uses layout). Units are **inches**;
+  `config.setPointScaleFactor(0)` disables Yoga's pixel rounding.
+- **Tree:** `slide.layout` → root node of slide size; flow children are elements without
+  `position`. A `box` with `position` is laid out standalone in that rect (`h` optional).
+  Inside a box, a child with `position` or `style.position: "absolute"` is absolute.
+- **Text measurement:** `fonts.js` finds the font file (system font dirs,
+  `SLIDEJ_FONT_DIRS`, model `fonts` map; only files whose name resembles the family are
+  opened), breaks lines greedily per run, and returns width/height. Widths are inflated
+  3 % (`WIDTH_SAFETY`) and line height is `max(font ascent+descent+gap, 1.2) × size`, so
+  PowerPoint never needs more room than reserved. Missing font → estimate + warning.
+- **CSS emulation:** Yoga has no `min-height: auto`, so default `flexShrink` is 1 for
+  children of a row (text wraps) and 0 for children of a column (text keeps its height).
+  Default direction is column (Yoga/React Native), not row.
+- **Emission:** box → optional background shape (`rect`/`roundRect`, inset by half the
+  border width to mimic CSS inner borders) + children. Text → `text` with per-side
+  `insets` = padding + border (`generateTextShape` writes `lIns/tIns/rIns/bIns`).
+  Animated box → one `group` with flattened primitive children (the generator does not
+  support nested groups or animated group children).
+- **Diagnostics:** unknown style keys / classes / enum values, missing fonts, text that
+  needs more height than it got, and children overflowing their container are returned
+  as `warnings`; the CLI prints them. Paths in warnings look like
+  `slide 2 > box[1] > text[0]`.
+- **Tests:** `test/layout.test.js` (plain `assert`, run by `npm test`).
+
 ## 6. Slide rendering (`generators/slide.js`)
 
 `generateSlide(slideData, rIdMap, slideSize)`:
@@ -175,6 +213,16 @@ matches the font). This is the fix for multi-line text overlapping — every tex
 path (paragraphs *and* table cells) routes through it.
 
 ---
+
+### Transitions (`generators/transition.js`)
+
+A catalog maps each type to its element (`p:`, `p14:`, `p15:prstTrans prst=…`,
+`p159:morph`), allowed directions and extra attributes. Classic types without a custom
+`duration` emit a plain `<p:transition>`; everything else emits
+`<mc:AlternateContent>` with `Requires="p14|p15|p159"`, `p14:dur`, and a classic
+fallback. The transition must precede `<p:timing>` in the slide (CT_Slide order:
+cSld, clrMapOvr, transition, timing); before 2.0 it was written after, which
+PowerPoint may repair. `parseSlideTransition` reads both forms back.
 
 ## 7. XML helpers & unit conventions (`utils/`)
 
@@ -330,7 +378,11 @@ table text colors in `slide.js`.
   `animation.js`, wire it into `generateBehavior`'s dispatch, **ensure the
   attrNameLst invariant**, and add a case to `examples/anim-audit.json`. If it
   should round-trip, make sure `PRESET_REVERSE` + `traverseForTarget` handle it.
-- **New component:** see §8.
+- **New component:** see §8. Add a default height in `COMPONENT_HEIGHT`
+  (`layout/index.js`) so it works in a flex flow without one.
+- **New style property:** add it to the key lists in `layout/style.js`, apply it in
+  `applyLayoutStyle` or `emit` (`layout/index.js`), document it in `SCHEMA.md`
+  (Layout section), and add a test.
 - **New per-element styling:** add to the relevant `generateXxx` in `slide.js`
   and the matching builder in `xml-helpers.js`; document in `SCHEMA.md` and add
   the inverse in `parsers/index.js` if it should round-trip.

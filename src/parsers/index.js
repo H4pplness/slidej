@@ -2,6 +2,7 @@ const JSZip = require('jszip');
 const fs = require('fs');
 const path = require('path');
 const { XMLParser } = require('fast-xml-parser');
+const { parseSlideTransition } = require('../generators/transition');
 const { emuToInch, ANIMATION_PRESETS, FLY_DIRECTIONS } = require('../utils/constants');
 
 const parser = new XMLParser({
@@ -170,7 +171,7 @@ function parseSlide(slideXml, slideRels) {
   result.elements.sort((a, b) => (a.id || 0) - (b.id || 0));
 
   // Transition
-  result.transition = parseTransition(sld['p:transition']);
+  result.transition = parseSlideTransition(sld);
 
   // Animations
   if (sld['p:timing']) {
@@ -638,29 +639,6 @@ function parseBackground(bg) {
   return fill;
 }
 
-function parseTransition(tr) {
-  if (!tr) return null;
-
-  const speed = tr['@_spd'] || 'med';
-  const advTm = tr['@_advTm'];
-  const advClick = tr['@_advClick'];
-
-  // Find transition type
-  let type = 'fade';
-  const typeKeys = ['p:fade', 'p:push', 'p:wipe', 'p:split', 'p:cover', 'p:cut', 'p:dissolve', 'p:random'];
-  for (const key of typeKeys) {
-    if (tr[key] != null) {
-      type = key.replace('p:', '');
-      break;
-    }
-  }
-
-  const result = { type, speed };
-  if (advTm) result.advanceAfter = parseInt(advTm);
-  if (advClick === '0') result.advanceOnClick = false;
-
-  return result;
-}
 
 function parseTheme(themeXml) {
   try {

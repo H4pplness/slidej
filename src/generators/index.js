@@ -8,13 +8,22 @@ const { generateTheme } = require('./theme');
 const { generateSlideMaster, generateSlideLayout } = require('./slide-master');
 const { generatePresentation, generatePresProps, generateViewProps, generateTableStyles, generateCoreProps, generateAppProps } = require('./presentation');
 const { generateSlide } = require('./slide');
+const { applyLayout } = require('../layout');
 
 /**
  * Generate a PPTX file from a JSON model
  * @param {object} model - The presentation model
  * @param {string} outputPath - Where to save the file
+ * @param {object} [options]
+ * @param {string} [options.baseDir] - Directory that relative font paths resolve against
  */
-async function generate(model, outputPath) {
+async function generate(model, outputPath, options = {}) {
+  // Resolve flex layouts (box / slide.layout) into absolute elements first.
+  const laid = await applyLayout(model, { baseDir: options.baseDir });
+  model = laid.model;
+  const warnings = [...laid.warnings];
+  const warn = msg => warnings.push(msg);
+
   const zip = new JSZip();
   const slides = model.slides || [];
   const slideCount = slides.length;
@@ -101,7 +110,7 @@ async function generate(model, outputPath) {
   for (let i = 0; i < slideCount; i++) {
     const slideData = slides[i];
     const { xml: slideRelsXml, rIdMap } = generateSlideRels(slideData);
-    const slideXml = generateSlide(slideData, rIdMap, slideSize);
+    const slideXml = generateSlide(slideData, rIdMap, slideSize, warn, `slide ${i + 1}`);
 
     zip.file(`ppt/slides/slide${i + 1}.xml`, slideXml);
     zip.file(`ppt/slides/_rels/slide${i + 1}.xml.rels`, slideRelsXml);
@@ -127,7 +136,7 @@ async function generate(model, outputPath) {
   fs.mkdirSync(path.dirname(resolvedPath), { recursive: true });
   fs.writeFileSync(resolvedPath, buffer);
 
-  return { path: resolvedPath, size: buffer.length, slides: slideCount };
+  return { path: resolvedPath, size: buffer.length, slides: slideCount, warnings };
 }
 
 /**

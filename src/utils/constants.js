@@ -135,20 +135,6 @@ const SHAPE_TYPES = {
   trapezoid: 'trapezoid',
 };
 
-// ============================================================
-// Slide transitions
-// ============================================================
-const TRANSITIONS = {
-  fade: '<p:fade/>',
-  push: '<p:push dir="r"/>',
-  wipe: '<p:wipe dir="d"/>',
-  split: '<p:split orient="horz" dir="out"/>',
-  cover: '<p:cover dir="r"/>',
-  cut: '<p:cut/>',
-  dissolve: '<p:dissolve/>',
-  random: '<p:random/>',
-};
-
 // Default slide dimensions (widescreen 16:9)
 const DEFAULT_SLIDE_WIDTH = 13.333;
 const DEFAULT_SLIDE_HEIGHT = 7.5;
@@ -157,6 +143,6 @@ module.exports = {
   EMU_PER_INCH, inchToEmu, emuToInch, ptToHundredths,
   NS, REL_TYPES, CONTENT_TYPES,
   ANIMATION_PRESETS, FLY_DIRECTIONS, TRIGGER_TYPES,
-  SHAPE_TYPES, TRANSITIONS,
+  SHAPE_TYPES,
   DEFAULT_SLIDE_WIDTH, DEFAULT_SLIDE_HEIGHT,
 };

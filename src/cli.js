@@ -46,7 +46,8 @@ program
       resolveMediaPaths(model, jsonDir);
 
       console.log(chalk.blue('Generating PPTX...'));
-      const result = await generate(model, options.output);
+      const result = await generate(model, options.output, { baseDir: jsonDir });
+      for (const w of result.warnings || []) console.warn(chalk.yellow('  ⚠ ' + w));
 
       console.log(chalk.green('✓ Success!'));
       console.log(chalk.white(`  File: ${result.path}`));
@@ -137,20 +138,16 @@ program
 // ============================================================
 
 function resolveMediaPaths(model, baseDir) {
-  for (const slide of model.slides || []) {
-    for (const el of slide.elements || []) {
+  // Walk every nesting level: groups and layout boxes both have children.
+  const visit = (els) => {
+    for (const el of els || []) {
       if (el.type === 'image' && el.src && !el.src.startsWith('data:') && !path.isAbsolute(el.src)) {
         el.src = path.resolve(baseDir, el.src);
       }
-      if (el.type === 'group' && el.children) {
-        for (const child of el.children) {
-          if (child.type === 'image' && child.src && !child.src.startsWith('data:') && !path.isAbsolute(child.src)) {
-            child.src = path.resolve(baseDir, child.src);
-          }
-        }
-      }
+      if (el.children) visit(el.children);
     }
-  }
+  };
+  for (const slide of model.slides || []) visit(slide.elements);
 }
 
 function stripBase64(model) {

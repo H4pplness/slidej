@@ -151,8 +151,11 @@ function buildBarChart(el, pos) {
   const labelColor = el.labelColor || '595959';
 
   const hasLabels = labels.length > 0;
-  const labelH = hasLabels ? Math.min(0.4, pos.h * 0.18) : 0;
-  const valueH = el.showValues ? Math.min(0.3, pos.h * 0.14) : 0;
+  // Text rows are at least one line of the chosen font size tall (plus insets).
+  const fontRow = ((el.fontSize || 11) * 1.35) / 72 + 0.1;
+  const labelH = hasLabels ? Math.max(fontRow, Math.min(0.4, pos.h * 0.18)) : 0;
+  const valueH = el.showValues ? Math.max(fontRow, Math.min(0.3, pos.h * 0.14)) : 0;
+  const valueLabels = Array.isArray(el.valueLabels) ? el.valueLabels : [];
   const chartTop = pos.y + valueH;
   const chartH = pos.h - labelH - valueH;
   const baselineY = chartTop + chartH;
@@ -175,7 +178,7 @@ function buildBarChart(el, pos) {
       adjust: { adj: 8000 },
     }));
     if (el.showValues) {
-      children.push(text(String(val), { x: pos.x + i * slot, y: by - valueH, w: slot, h: valueH }, {
+      children.push(text(String(valueLabels[i] != null ? valueLabels[i] : val), { x: pos.x + i * slot, y: by - valueH, w: slot, h: valueH }, {
         fontSize: el.fontSize || 11, color: labelColor, align: 'center', vertAlign: 'bottom',
       }));
     }

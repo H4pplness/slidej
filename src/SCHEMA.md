@@ -49,14 +49,57 @@
   "transition": "fade",            // String shorthand
   // OR detailed:
   "transition": {
-    "type": "fade",                 // fade|push|wipe|split|cover|cut|dissolve|random
+    "type": "fade",                 // any type from "Transitions" below
+    "direction": "left",            // per type, see below
     "speed": "med",                 // slow|med|fast
+    "duration": 800,                // exact ms (PowerPoint 2010+)
     "advanceAfter": 3000,           // Auto-advance after ms
     "advanceOnClick": true
   },
   "elements": [ ... ]
 }
 ```
+
+### Transitions
+
+`transition` is a type name or an object:
+
+```json
+"transition": {
+  "type": "vortex",          // see the table below
+  "direction": "right",      // left|right|up|down, up-left…, horizontal|vertical, in|out, center (per type)
+  "speed": "slow",           // slow|med|fast (≈1000/750/500 ms)
+  "duration": 1400,          // exact milliseconds; overrides speed in PowerPoint 2010+
+  "advanceAfter": 3000,      // auto-advance after ms
+  "advanceOnClick": true
+}
+```
+
+| Generation | Types | Options |
+|---|---|---|
+| Classic (every viewer) | `fade` `cut` | `thruBlack` |
+| | `push` `wipe` | direction: left, right, up, down |
+| | `cover` `pull` | direction: the four sides + up-left, up-right, down-left, down-right |
+| | `split` | direction: in, out; `orientation`: horizontal, vertical |
+| | `blinds` `checker` `comb` `randomBar` | direction: horizontal, vertical |
+| | `strips` | direction: up-left, up-right, down-left, down-right |
+| | `zoom` | direction: in, out |
+| | `wheel` | `spokes`: 1, 2, 3, 4, 8 |
+| | `circle` `diamond` `plus` `wedge` `newsflash` `dissolve` `random` | none |
+| PowerPoint 2010+ | `vortex` `pan` `glitter` (`pattern`: diamond, hexagon) `prism` (`content`, `inverted`) | direction: the four sides |
+| | `switch` `flip` `ferris` `gallery` `conveyor` `reveal` (`thruBlack`) | direction: left, right |
+| | `doors` `window` | direction: horizontal, vertical |
+| | `flythrough` (`bounce`) `warp` `shred` (`pattern`: strip, rectangle) | direction: in, out |
+| | `ripple` | direction: center or a corner |
+| | `honeycomb` `flash` `wheelReverse` (`spokes`) | none |
+| PowerPoint 2013+ | `airplane` `crush` `curtains` `drape` `fallOver` `fracture` `origami` `pageCurlDouble` `pageCurlSingle` `peelOff` `prestige` `wind` | `invert`: mirror the direction |
+| PowerPoint 2019 / 365 | `morph` | `morphBy`: byObject (default), byWord, byChar |
+
+Newer types and any `duration` are written with a classic fallback (`fade`, or the
+classic effect itself), so older viewers still open the file. **Morph** animates
+between objects that appear on both slides; give matching elements the same `name`
+on consecutive slides (prefix the name with `!!` to force a match). Unknown types
+or directions are reported as warnings by `generate`.
 
 ## Element Types
 
@@ -214,6 +257,81 @@
 }
 ```
 
+## Layout (flex boxes)
+
+Instead of computing `position` for every element, put elements in **boxes** and
+let SlideJ lay them out with flexbox (the Yoga engine, as in React Native).
+Text is measured with the real font, so boxes grow to fit their text.
+Elements that keep an explicit `position` still work exactly as before.
+
+```json
+{
+  "styles": {                                   // reusable classes (like CSS classes)
+    "page":  { "padding": [0.45, 0.6], "gap": 0.3, "color": "F5F3EE", "fontFamily": "Segoe UI" },
+    "card":  { "background": "1C2240", "border": { "width": 1, "color": "2C3460" },
+               "radius": 0.12, "padding": 0.3, "gap": 0.15 }
+  },
+  "fonts": { "Brand Sans": "./fonts/BrandSans-Regular.ttf" },   // optional, for fonts not installed
+  "slides": [{
+    "layout": { "class": "page" },              // the slide itself is the root flex container
+    "elements": [
+      { "type": "text", "text": "Title", "style": { "fontSize": 34, "bold": true } },
+      { "type": "box", "style": { "direction": "row", "gap": 0.3, "grow": 1 }, "children": [
+        { "type": "box", "class": "card", "style": { "grow": 1, "basis": 0 }, "children": [
+          { "type": "text", "text": "Card title", "style": { "fontSize": 20, "bold": true } },
+          { "type": "text", "text": "Body text wraps and the card grows to fit it." }
+        ] }
+      ] },
+      { "type": "shape", "position": { "x": 11, "y": 6, "w": 1, "h": 1 } }   // absolute, ignores the flow
+    ]
+  }]
+}
+```
+
+### Where layout applies
+- **`slide.layout`** (style object, may contain `class`): the slide becomes a flex
+  container of the slide's size. Elements **without** `position` flow inside it;
+  elements **with** `position` stay absolute.
+- **`box`** element: a flex container (like a `div`). Anywhere in a flow, or placed
+  absolutely with `position: { x, y, w, h? }` (omit `h` to size it to its content).
+- Children of a box flow inside it. A child with `style.position: "absolute"` is
+  placed with `top/right/bottom/left` relative to the box; a child with the old
+  `position` rect is treated the same way (coordinates relative to the box).
+
+### Style properties
+Set them in `style` (inline) or in a named class in root `styles`, applied with
+`class: "a b"` (or `["a", "b"]`). Classes apply in order, then `style` wins.
+Lengths are **inches** (or `"50%"`, `"auto"`); border width is **points**.
+
+| Group | Properties |
+|---|---|
+| Size | `width` `height` `minWidth` `maxWidth` `minHeight` `maxHeight` `aspectRatio` |
+| Flex container | `direction` (`column` default, `row`, `row-reverse`, `column-reverse`), `justify` / `justifyContent` (`start` `center` `end` `space-between` `space-around` `space-evenly`), `alignItems` (`stretch` default, `start` `center` `end` `baseline`), `alignContent`, `wrap` (`true`/`"wrap"`/`"wrap-reverse"`), `gap` `rowGap` `columnGap` |
+| Flex item | `grow` / `flexGrow`, `shrink` / `flexShrink`, `basis` / `flexBasis`, `alignSelf` |
+| Spacing | `padding`, `margin`: number, `[v, h]`, `[t, h, b]`, `[t, r, b, l]` or `{top, right, bottom, left}`; also `paddingTop` … `marginLeft`; `margin` may be `"auto"` |
+| Positioning | `position` (`relative` default, `absolute`), `top` `right` `bottom` `left` |
+| Visual | `background` (color or gradient fill), `border` `{ width, color, dash }`, `radius` (inches), `shadow` |
+| Text (inherited) | `fontSize` `fontFamily` `color` `bold` `italic` `underline` `textAlign` `verticalAlign` `lineSpacing` `letterSpacing` |
+
+Text properties **inherit** from ancestor boxes (and `slide.layout`), as in CSS.
+An element's own fields (`fontSize`, `color`, `align`, …) override its style.
+
+### Behaviour notes
+- Default `direction` is **column** (like React Native), not row.
+- Items shrink along a row (so text wraps) but **not** along a column, so text is
+  never squeezed below its height. When content does not fit, it overflows and
+  `generate` prints a warning naming the element (`slide 2 > box[1] > text[0]`).
+- Text, shapes with text, tables, images (aspect ratio read from PNG/JPEG/GIF) and
+  components size themselves; a plain `shape` needs `width`/`height` or `grow`.
+  Components without a height get a default (`progressBar` 0.4", `kpiCard` 1.4", …).
+- A box with `animations` becomes one group and animates as a unit; animations
+  on its descendants are then ignored. Animate children individually by leaving
+  the box itself un-animated.
+- Fonts are looked up in the system font folders (plus `SLIDEJ_FONT_DIRS` and root
+  `fonts`). If a font is missing, text is measured with an estimate and
+  `generate` warns.
+- `parse` returns absolute elements: boxes and classes are not reconstructed.
+
 ## Components (high-level, self-drawn)
 
 Components are convenience element types that expand into a `group` of primitive
@@ -258,7 +376,8 @@ shapes/text. Put them directly in a slide's `elements`. They accept `position`
   "max": 100,                  // optional, defaults to max(data)
   "showValues": true,
   "axis": true, "axisColor": "BFBFBF",
-  "labelColor": "595959"
+  "labelColor": "595959",
+  "valueLabels": ["40%", "70%", "55%", "90%"]   // optional text shown instead of the raw values
 }
 ```
 

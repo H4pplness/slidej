@@ -69,20 +69,28 @@ Background: hex string `"1A1A2E"` or gradient object:
 }
 ```
 
-Transition: `"fade"` | `"push"` | `"wipe"` | `"split"` | `"cover"` | `"cut"` | `"dissolve"` | `"random"`, or object `{ "type": "fade", "speed": "med", "advanceAfter": 3000 }`.
+Transition: a type name or `{ "type", "direction", "speed", "duration", "advanceAfter", "advanceOnClick" }`.
+
+- Classic (work everywhere): `fade` `cut` `push` `wipe` `split` `cover` `pull` `zoom` `blinds` `checker` `comb` `randomBar` `strips` `wheel` `circle` `diamond` `plus` `wedge` `newsflash` `dissolve` `random`
+- PowerPoint 2010+: `vortex` `switch` `flip` `ripple` `honeycomb` `prism` `doors` `window` `shred` `ferris` `flythrough` `warp` `gallery` `conveyor` `pan` `glitter` `reveal` `wheelReverse` `flash`
+- PowerPoint 2013+: `airplane` `crush` `curtains` `drape` `fallOver` `fracture` `origami` `pageCurlDouble` `pageCurlSingle` `peelOff` `prestige` `wind`
+- `morph`: objects with the same `name` on consecutive slides morph into each other.
+- `direction`: `left` `right` `up` `down` (and `up-left`…, `horizontal`/`vertical`, `in`/`out` where the type uses them). Run `slidej schema` for which type takes which.
+
+Use transitions with restraint: one or two types per deck, a stronger one (`push`, `morph`, `gallery`) for section changes.
 
 ---
 
 ## Elements
 
-All elements **must** have `position: { x, y, w, h }` in **inches**.
+Elements are placed either by **flex layout** (see "Flex Layout" below, preferred) or with an absolute `position: { x, y, w, h }` in **inches**.
 
 Slide size: **13.333" wide x 7.5" tall**. Safe margin: 0.5" on each side.
 
 ### Rules
 
 - Colors are **bare hex without `#`**: use `"FF0000"` not `"#FF0000"`.
-- Font sizes are in **points**. Text is **not** auto-sized — reduce `fontSize` or enlarge box if text overflows.
+- Font sizes are in **points**. With absolute `position`, text is **not** auto-sized: reduce `fontSize` or enlarge the box if it overflows. In a flex layout, boxes grow to fit their text.
 - Image `src` paths are resolved **relative to the JSON file's directory**.
 - Use `"\n"` inside any text string for line breaks.
 
@@ -400,7 +408,59 @@ Use `onClick` for elements that should appear only on click:
 
 ---
 
-## Layout Reference
+## Flex Layout (preferred for new slides)
+
+Rather than computing `position` for every element, lay slides out with **boxes**
+and flexbox. SlideJ measures text with the real font, sizes boxes to their
+content and warns when something overflows. Full reference: `slidej schema`
+(section "Layout").
+
+```json
+{
+  "styles": {
+    "page":  { "padding": [0.45, 0.6, 0.3, 0.6], "gap": 0.3, "color": "1A1A2E" },
+    "card":  { "background": "F4F6FA", "radius": 0.12, "padding": 0.3, "gap": 0.12 },
+    "muted": { "color": "6B7280", "fontSize": 16 }
+  },
+  "slides": [{
+    "background": "FFFFFF",
+    "layout": { "class": "page" },
+    "elements": [
+      { "type": "text", "text": "Three reasons", "style": { "fontSize": 36, "bold": true } },
+      { "type": "box", "style": { "direction": "row", "gap": 0.3, "grow": 1, "alignItems": "start" }, "children": [
+        { "type": "box", "class": "card", "style": { "grow": 1, "basis": 0 },
+          "animations": [{ "type": "flyIn", "direction": "bottom", "trigger": "afterPrevious", "duration": 500 }],
+          "children": [
+            { "type": "text", "text": "Fast", "style": { "fontSize": 22, "bold": true } },
+            { "type": "text", "class": "muted", "text": "Any length of text; the card grows to fit." }
+          ] }
+      ] },
+      { "type": "box", "style": { "direction": "row", "justify": "space-between", "fontSize": 12 }, "children": [
+        { "type": "text", "text": "Source: …" }, { "type": "text", "text": "2" } ] }
+    ]
+  }]
+}
+```
+
+Key rules:
+- `slide.layout` makes the slide a flex container; elements **without** `position` flow in it,
+  elements **with** `position` stay absolute (good for decorative shapes that bleed off-slide).
+- `box` = `div`: `style` holds flex (`direction`, `gap`, `justify`, `alignItems`, `grow`, `basis`, `wrap`),
+  spacing (`padding`, `margin` as number or CSS-order array), size (`width`, `height`, `%`), and
+  visuals (`background`, `border {width pt, color}`, `radius`, `shadow`).
+- Default direction is **column**. Equal columns: children with `"grow": 1, "basis": 0`.
+- Text props (`fontSize`, `color`, `fontFamily`, `bold`, `textAlign`, …) inherit from parent boxes.
+- Reuse styles with root `styles` + `class: "card muted"`; inline `style` wins.
+- Put `animations` on a box to animate it as one unit, or on its children to stagger them
+  (not both: a box's animation overrides its children's).
+- A plain `shape` in a flow needs `width`/`height` or `grow`; text, tables, images and
+  components size themselves.
+- **Read the warnings `slidej generate` prints.** "overflows its container" means the content
+  does not fit: shorten text, reduce sizes, or split the slide.
+
+---
+
+## Layout Reference (absolute positioning)
 
 Slide: **13.333" x 7.5"**. Safe area: x=0.5 to x=12.833, y=0.5 to y=7.0.
 

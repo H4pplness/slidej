@@ -104,7 +104,7 @@ Dimensions are in **inches**. Default `13.333 × 7.5` is standard widescreen (16
 }
 ```
 
-**Transitions:** `fade` `push` `wipe` `split` `cover` `cut` `dissolve` `random` — speed: `slow` `med` `fast`
+**Transitions:** 50+ types: the classics (`fade` `push` `wipe` `split` `cover` `zoom` …), PowerPoint 2010 (`vortex` `ripple` `gallery` `flip` …), PowerPoint 2013 (`curtains` `airplane` `origami` `pageCurlSingle` …) and `morph`. Options: `direction`, `speed` (`slow` `med` `fast`) or `duration` in ms, `advanceAfter`. Newer types fall back to a fade in older viewers. Full list: `slidej schema`.
 
 ### Elements
 
@@ -179,6 +179,41 @@ Types: `rect` `roundRect` `ellipse` `triangle` `diamond` `pentagon` `hexagon` `o
 ```
 </details>
 
+### Flex layout (boxes)
+
+Instead of computing `position` for every element, nest elements in **boxes** and let
+SlideJ lay them out with flexbox, like HTML/CSS. Text is measured with the real font,
+so boxes grow to fit it, and `generate` warns when something overflows.
+
+```json
+{
+  "styles": {
+    "page": { "padding": 0.6, "gap": 0.3, "color": "1A1A2E" },
+    "card": { "background": "F4F6FA", "border": { "width": 1, "color": "E0E0E0" },
+              "radius": 0.12, "padding": 0.3, "gap": 0.1 }
+  },
+  "slides": [{
+    "layout": { "class": "page" },
+    "elements": [
+      { "type": "text", "text": "Three reasons", "style": { "fontSize": 36, "bold": true } },
+      { "type": "box", "style": { "direction": "row", "gap": 0.3 }, "children": [
+        { "type": "box", "class": "card", "style": { "grow": 1, "basis": 0 }, "children": [
+          { "type": "text", "text": "Fast", "style": { "fontSize": 22, "bold": true } },
+          { "type": "text", "text": "Cards grow to fit their text." }
+        ] }
+      ] }
+    ]
+  }]
+}
+```
+
+- `box` = `div`: `direction`, `gap`, `justify`, `alignItems`, `grow`, `wrap`, `padding`,
+  `margin`, `width`/`height` (inches or `%`), `background`, `border`, `radius`, `shadow`.
+- Reusable classes in root `styles`, applied with `class`; text properties inherit like CSS.
+- Elements with an explicit `position` still work and can sit next to the flow.
+- Powered by [Yoga](https://yogalayout.dev) and [fontkit](https://github.com/foliojs/fontkit).
+  Run `slidej schema` for every property.
+
 ### Animations
 
 Add an `animations` array to any element:
@@ -225,6 +260,7 @@ Agent skills live in `skills/` (`slidej` for the schema and CLI, `slidej-templat
 src/
   cli.js                # CLI entry point
   index.js              # Library exports
+  layout/               # Flex layout engine (boxes, styles, text measurement)
   generators/           # JSON → PPTX engine
   parsers/              # PPTX → JSON engine
   utils/                # XML helpers, constants

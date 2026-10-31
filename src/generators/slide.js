@@ -1,12 +1,13 @@
 const { XML_DECL, escXml, fillXml, lineXml, xfrmXml, avLstXml, runPropsXml, paraPropsXml } = require('../utils/xml-helpers');
-const { inchToEmu, SHAPE_TYPES, TRANSITIONS, DEFAULT_SLIDE_WIDTH, DEFAULT_SLIDE_HEIGHT } = require('../utils/constants');
+const { inchToEmu, SHAPE_TYPES, DEFAULT_SLIDE_WIDTH, DEFAULT_SLIDE_HEIGHT } = require('../utils/constants');
 const { generateTiming } = require('./animation');
+const { generateTransition } = require('./transition');
 const { expandComponents } = require('./components');
 
 /**
  * Generate a complete slide XML
  */
-function generateSlide(slideData, rIdMap, slideSize) {
+function generateSlide(slideData, rIdMap, slideSize, warn = () => {}, where = 'slide') {
   const size = slideSize || { width: DEFAULT_SLIDE_WIDTH, height: DEFAULT_SLIDE_HEIGHT };
 
   let spIdCounter = 1;
@@ -58,18 +59,15 @@ function generateSlide(slideData, rIdMap, slideSize) {
   const timingXml = generateTiming(animatedEls, size);
 
   // Transition
-  let transitionXml = '';
-  if (slideData.transition) {
-    transitionXml = generateTransition(slideData.transition);
-  }
+  const transitionXml = generateTransition(slideData.transition, warn, where);
 
   return XML_DECL +
 `<p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
   xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
   xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main">
   <p:cSld>${bgXml}<p:spTree>${shapeTreeXml}</p:spTree></p:cSld>
-  ${timingXml}
   ${transitionXml}
+  ${timingXml}
 </p:sld>`;
 }
 
@@ -86,7 +84,11 @@ function generateTextShape(el) {
   if (el.wrap !== false) bodyAttrs.push('wrap="square"');
   if (el.vertAlign) bodyAttrs.push(`anchor="${el.vertAlign === 'middle' ? 'ctr' : el.vertAlign === 'bottom' ? 'b' : 't'}"`);
   if (el.autoFit) bodyAttrs.push('autoFit="1"');
-  if (el.margin != null) {
+  if (el.insets) {
+    // Per-side insets (inches), set by the layout engine from padding + border.
+    const i = el.insets;
+    bodyAttrs.push(`lIns="${inchToEmu(i.left || 0)}" tIns="${inchToEmu(i.top || 0)}" rIns="${inchToEmu(i.right || 0)}" bIns="${inchToEmu(i.bottom || 0)}"`);
+  } else if (el.margin != null) {
     const m = inchToEmu(el.margin);
     bodyAttrs.push(`lIns="${m}" tIns="${m}" rIns="${m}" bIns="${m}"`);
   }
@@ -365,17 +367,6 @@ function generateBackground(bg) {
   return '';
 }
 
-function generateTransition(transition) {
-  if (typeof transition === 'string') {
-    const xml = TRANSITIONS[transition] || TRANSITIONS.fade;
-    return `<p:transition spd="med">${xml}</p:transition>`;
-  }
-  const speed = transition.speed || 'med';
-  const type = TRANSITIONS[transition.type] || TRANSITIONS.fade;
-  const advClick = transition.advanceOnClick !== false ? '' : ' advClick="0"';
-  const advTm = transition.advanceAfter ? ` advTm="${transition.advanceAfter}"` : '';
-  return `<p:transition spd="${speed}"${advClick}${advTm}>${type}</p:transition>`;
-}
 
 function generateShadow(shadow) {
   const blur = Math.round((shadow.blur || 4) * 12700);

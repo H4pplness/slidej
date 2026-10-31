@@ -12,7 +12,7 @@ const ANIMATIONS = ['appear', 'fadeIn', 'flyIn', 'wipeIn', 'zoomIn', 'splitIn', 
   'pulse', 'spin', 'growShrink', 'colorChange', 'transparency', 'teeter', 'blink', 'motionPath'];
 const TRIGGERS = ['onClick', 'withPrevious', 'afterPrevious'];
 const COMPONENTS = ['progressBar', 'progressRing', 'barChart', 'kpiCard', 'ratingStars', 'timeline', 'processFlow'];
-const ELEMENTS = ['text', 'shape', 'image', 'table', 'group', ...COMPONENTS];
+const ELEMENTS = ['text', 'shape', 'image', 'table', 'group', 'box', ...COMPONENTS];
 const CORE_ARCHETYPES = ['cover', 'section', 'content', 'cards', 'metrics', 'comparison', 'process', 'closing'];
 const GUIDE_KEYS = ['palette', 'typography', 'layout', 'components', 'animations'];
 const THEME_REF = /^(accent|dk|lt|hlink|folHlink)\d?$/;
@@ -50,6 +50,7 @@ if (!deckMode) {
   else if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(model.name)) err('root', `name "${model.name}" must be lowercase with hyphens`);
   if (!model.description) warn('root', 'missing "description" (say what it is for and its tone)');
   if (!model.guide) err('root', 'missing "guide"');
+  if (!model.styles) warn('root', 'no "styles": define the design system as reusable classes (see the skill)');
   else for (const k of GUIDE_KEYS) if (!model.guide[k]) warn('guide', `missing "${k}"`);
 }
 
@@ -125,10 +126,35 @@ function checkAnimations(where, el) {
   }
 }
 
-function checkElement(where, el, inGroup) {
+// Style objects (inline or classes): only colors are checked here; property
+// names and values are validated by `slidej generate`, which prints warnings.
+function checkStyle(where, st) {
+  if (!st) return;
+  checkColor(`${where} style color`, st.color);
+  checkFill(`${where} style background`, st.background);
+  if (st.border) checkColor(`${where} style border`, st.border.color);
+}
+const STYLES = model.styles || {};
+for (const [name, st] of Object.entries(STYLES)) checkStyle(`styles.${name}`, st);
+
+// inFlow: the element sits in a flex layout (slide.layout or a box), so it
+// needs no `position`; the layout engine sizes it and reports overflow.
+function checkElement(where, el, inGroup, inFlow) {
   if (!ELEMENTS.includes(el.type)) return err(where, `unknown element type "${el.type}"`);
+  for (const c of (Array.isArray(el.class) ? el.class : String(el.class || '').split(/\s+/)).filter(Boolean)) {
+    if (!STYLES[c]) err(where, `unknown class "${c}" (not in root "styles")`);
+  }
+  checkStyle(where, el.style);
   const pos = el.position;
-  if (!pos || [pos.x, pos.y, pos.w, pos.h].some(v => typeof v !== 'number')) {
+  if (el.type === 'box') {
+    if (!pos && !inFlow) err(where, 'box outside a flex layout needs position {x,y,w[,h]}');
+    (el.children || []).forEach((c, k) => checkElement(`${where} > ${c.name || c.type}[${k}]`, c, false, true));
+    checkAnimations(where, el);
+    return;
+  }
+  if (!pos && inFlow) {
+    // Sized by the layout engine.
+  } else if (!pos || [pos.x, pos.y, pos.w, pos.h].some(v => typeof v !== 'number')) {
     if (!inGroup || el.type !== 'group') err(where, 'missing numeric position {x,y,w,h}');
   } else {
     const off = pos.x < -0.001 || pos.y < -0.001 || pos.x + pos.w > W + 0.001 || pos.y + pos.h > H + 0.001;
@@ -142,7 +168,7 @@ function checkElement(where, el, inGroup) {
   checkColor(`${where} color`, el.color, { hexOnly: el.type === 'table' });
   checkFill(`${where} fill`, el.fill);
   if (el.line) checkColor(`${where} line`, el.line.color);
-  if (el.type === 'text' || (el.type === 'shape' && el.text)) checkTextFit(where, el);
+  if (pos && (el.type === 'text' || (el.type === 'shape' && el.text))) checkTextFit(where, el);
 
   if (el.type === 'image') {
     if (!el.src) err(where, 'image without "src"');
@@ -159,7 +185,7 @@ function checkElement(where, el, inGroup) {
   if (el.type === 'group') {
     (el.children || []).forEach((c, k) => {
       if (c.animations && c.animations.length) warn(`${where} child ${k}`, 'animations on group children are ignored; animate the group');
-      checkElement(`${where} child ${k}`, c, true);
+      checkElement(`${where} child ${k}`, c, true, false);
     });
   }
   checkAnimations(where, el);
@@ -174,7 +200,8 @@ slides.forEach((slide, i) => {
   }
   const els = slide.elements || [];
   if (els.length === 0) warn(where, 'no elements');
-  els.forEach((el, j) => checkElement(`${where} el ${j}${el.name ? ` "${el.name}"` : ''}`, el, false));
+  if (slide.layout) checkStyle(`${where} layout`, slide.layout);
+  els.forEach((el, j) => checkElement(`${where} el ${j}${el.name ? ` "${el.name}"` : ''}`, el, false, !!slide.layout));
 });
 
 // ---- Report ----

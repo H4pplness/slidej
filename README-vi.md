@@ -104,7 +104,7 @@ Kích thước tính bằng **inch**. Mặc định `13.333 × 7.5` là widescre
 }
 ```
 
-**Transition:** `fade` `push` `wipe` `split` `cover` `cut` `dissolve` `random` — tốc độ: `slow` `med` `fast`
+**Transition:** hơn 50 kiểu: các kiểu cổ điển (`fade` `push` `wipe` `split` `cover` `zoom` …), PowerPoint 2010 (`vortex` `ripple` `gallery` `flip` …), PowerPoint 2013 (`curtains` `airplane` `origami` `pageCurlSingle` …) và `morph`. Tùy chọn: `direction`, `speed` (`slow` `med` `fast`) hoặc `duration` tính bằng ms, `advanceAfter`. Kiểu mới tự lùi về fade trên PowerPoint đời cũ. Danh sách đầy đủ: `slidej schema`.
 
 ### Các loại Element
 
@@ -179,6 +179,41 @@ Loại: `rect` `roundRect` `ellipse` `triangle` `diamond` `pentagon` `hexagon` `
 ```
 </details>
 
+### Layout flex (box)
+
+Thay vì tự tính `position` cho từng phần tử, lồng các phần tử vào **box** và để SlideJ
+dàn trang bằng flexbox như HTML/CSS. Chữ được đo bằng font thật nên box tự giãn theo
+nội dung, và `generate` sẽ cảnh báo khi có phần tử bị tràn.
+
+```json
+{
+  "styles": {
+    "page": { "padding": 0.6, "gap": 0.3, "color": "1A1A2E" },
+    "card": { "background": "F4F6FA", "border": { "width": 1, "color": "E0E0E0" },
+              "radius": 0.12, "padding": 0.3, "gap": 0.1 }
+  },
+  "slides": [{
+    "layout": { "class": "page" },
+    "elements": [
+      { "type": "text", "text": "Ba lý do", "style": { "fontSize": 36, "bold": true } },
+      { "type": "box", "style": { "direction": "row", "gap": 0.3 }, "children": [
+        { "type": "box", "class": "card", "style": { "grow": 1, "basis": 0 }, "children": [
+          { "type": "text", "text": "Nhanh", "style": { "fontSize": 22, "bold": true } },
+          { "type": "text", "text": "Thẻ tự cao theo nội dung." }
+        ] }
+      ] }
+    ]
+  }]
+}
+```
+
+- `box` tương đương `div`: `direction`, `gap`, `justify`, `alignItems`, `grow`, `wrap`,
+  `padding`, `margin`, `width`/`height` (inch hoặc `%`), `background`, `border`, `radius`, `shadow`.
+- Khai báo class dùng lại trong `styles` ở root, gắn bằng `class`; thuộc tính chữ kế thừa như CSS.
+- Phần tử có `position` cố định vẫn chạy như cũ và đặt cạnh luồng flex được.
+- Dùng [Yoga](https://yogalayout.dev) và [fontkit](https://github.com/foliojs/fontkit).
+  Chạy `slidej schema` để xem đầy đủ thuộc tính.
+
 ### Animation
 
 Thêm mảng `animations` vào bất kỳ element nào:
@@ -225,6 +260,7 @@ Các skill cho agent nằm trong `skills/` (`slidej` cho schema và CLI, `slidej
 src/
   cli.js                # CLI entry point
   index.js              # Export thư viện
+  layout/               # Engine layout flex (box, style, đo chữ)
   generators/           # JSON → PPTX engine
   parsers/              # PPTX → JSON engine
   utils/                # XML helpers, constants

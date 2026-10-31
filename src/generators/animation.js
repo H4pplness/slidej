@@ -1,6 +1,11 @@
 const { ANIMATION_PRESETS, FLY_DIRECTIONS, TRIGGER_TYPES } = require('../utils/constants');
 
 const MAIN_SEQ_ID = 2;
+// The wipe filter names the side the reveal starts from, as PowerPoint writes it:
+// "From Bottom" is presetSubtype 4 + wipe(down), "From Top" is 1 + wipe(up).
+// The filter only knows up/down/left/right, so the side names top/bottom map onto them.
+const WIPE_ALIASES = { top: 'up', bottom: 'down' };
+const WIPE_SUBTYPES = { up: 1, right: 2, down: 4, left: 8 };
 // Emphasis effects written with autoRev="1" play forward then back: 2 × duration.
 const AUTO_REVERSE = new Set(['pulse', 'growShrink']);
 const TEXT_UNITS = ['paragraph', 'word', 'letter'];
@@ -254,7 +259,7 @@ function generateBehavior(anim, preset, dur, getNextId, slideSize) {
 
   // WIPE IN/OUT
   if (anim.type === 'wipeIn' || anim.type === 'wipeOut') {
-    const dir = anim.direction || 'down';
+    const dir = WIPE_ALIASES[anim.direction] || anim.direction || 'down';
     const filter = `wipe(${dir})`;
     const transition = preset.presetClass === 'entr' ? 'in' : 'out';
     return generateAnimEffect(tgt, dur, filter, transition, getNextId) +
@@ -651,6 +656,10 @@ function generateMotionPath(anim, dur, getNextId, slideSize) {
 function getSubtype(anim) {
   if (anim.type === 'flyIn' || anim.type === 'flyOut') {
     return String(FLY_DIRECTIONS[anim.direction || 'bottom'] || 4);
+  }
+  if (anim.type === 'wipeIn' || anim.type === 'wipeOut') {
+    const dir = WIPE_ALIASES[anim.direction] || anim.direction || 'down';
+    return String(WIPE_SUBTYPES[dir] || 0);
   }
   return '0';
 }

@@ -481,7 +481,7 @@ or item by item with `by: "item"`, see Animations).
 | `appear` | Entrance | Instantly appear |
 | `fadeIn` | Entrance | Fade in |
 | `flyIn` | Entrance | Fly in from direction |
-| `wipeIn` | Entrance | Wipe reveal (use `direction`) |
+| `wipeIn` | Entrance | Wipe reveal from the `direction` side: `bottom` (grows up), `top`, `left`, `right` (`up`/`down` = `top`/`bottom`) |
 | `zoomIn` | Entrance | Zoom in from small |
 | `splitIn` | Entrance | Split/barn-door reveal |
 | `bounceIn` | Entrance | Bounce in with scale overshoot |
@@ -534,7 +534,7 @@ or item by item with `by: "item"`, see Animations).
 
 ```json
 { "type": "barChart", "data": [12, 19, 27], "position": { "x": 1, "y": 1.5, "w": 6, "h": 4 },
-  "animations": [{ "type": "wipeIn", "direction": "up", "by": "item", "stagger": 250, "trigger": "afterPrevious" }] }
+  "animations": [{ "type": "wipeIn", "direction": "bottom", "by": "item", "stagger": 250, "trigger": "afterPrevious" }] }
 
 { "type": "text", "text": "Point one\nPoint two\nPoint three", "bullet": true, "position": { "x": 8, "y": 1.5, "w": 4.5, "h": 2 },
   "animations": [{ "type": "floatIn", "by": "paragraph", "stagger": 400, "trigger": "afterPrevious" }] }
